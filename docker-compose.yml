@@ -1,0 +1,55 @@
+services:
+  # ---------------------------------------------------------------------------
+  # Frontend Astro (Nginx)
+  # ---------------------------------------------------------------------------
+  site:
+    build: ./site
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - observatorio-net
+
+  # ---------------------------------------------------------------------------
+  # Backend FastAPI
+  # ---------------------------------------------------------------------------
+  api:
+    build: ./api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./vault:/app/vault:ro
+    environment:
+      - VAULT_PATH=/app/vault
+      - CORS_ORIGINS=http://localhost:3000,http://site.localhost
+    networks:
+      - observatorio-net
+
+  # ---------------------------------------------------------------------------
+  # Caddy reverse proxy (opcional)
+  # ---------------------------------------------------------------------------
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - site
+      - api
+    networks:
+      - observatorio-net
+    profiles:
+      - proxy
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  observatorio-net:
+    driver: bridge
