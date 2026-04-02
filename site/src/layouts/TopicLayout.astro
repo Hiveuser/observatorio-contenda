@@ -1,0 +1,74 @@
+---
+import Base from './Base.astro';
+import TopicMeta from '../components/TopicMeta.astro';
+import { markdownToHtml, formatDate } from '../utils/markdown';
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  category: string;
+  coverImage?: string;
+  publishedAt?: string;
+  updatedAt?: string;
+  author?: string;
+  tags?: string[];
+  summary?: string;
+  markdownContent?: string;
+  relatedTopics?: any[];
+}
+
+const {
+  title,
+  subtitle,
+  category,
+  coverImage,
+  publishedAt,
+  updatedAt,
+  author,
+  tags = [],
+  summary,
+  markdownContent = '',
+  relatedTopics = [],
+} = Astro.props;
+
+const htmlContent = markdownContent ? markdownToHtml(markdownContent) : '';
+---
+
+<Base title={title} description={summary || subtitle} image={coverImage}>
+  <header class="topic-header">
+    <a href="/" class="back-link">&larr; Voltar ao mapa</a>
+    <div class="topic-category">{category}</div>
+    <h1>{title}</h1>
+    {subtitle && <p class="topic-subtitle">{subtitle}</p>}
+    <TopicMeta
+      publishedAt={publishedAt}
+      updatedAt={updatedAt}
+      author={author}
+      tags={tags}
+    />
+  </header>
+
+  {coverImage && (
+    <div class="topic-cover">
+      <img src={coverImage} alt={title} />
+    </div>
+  )}
+
+  <main class="topic-content">
+    {htmlContent && <article class="prose" set:html={htmlContent} />} 
+
+    {relatedTopics.length > 0 && (
+      <section class="related-topics">
+        <h3>Topicos relacionados</h3>
+        <div class="related-grid">
+          {relatedTopics.map((topic) => (
+            <a href={`/temas/${topic.slug}`} class="related-card">
+              <span class="related-category">{topic.category}</span>
+              <span class="related-title">{topic.title}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </main>
+</Base>

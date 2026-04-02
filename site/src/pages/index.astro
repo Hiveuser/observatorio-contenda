@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import MapView from '../components/MapView.astro';
+import FilterBar from '../components/FilterBar.astro';
+import SlidePanel from '../components/SlidePanel.astro';
+import StatsBar from '../components/StatsBar.astro';
+---
+
+<Base title="Mapa">
+  <Header />
+  <FilterBar />
+  <MapView centerLat={-25.47} centerLng={-49.30} zoom={11} geojsonUrl="/data/iniciativas.geojson" height="calc(100vh - 120px)" />
+  <StatsBar total={0} recuperacao={0} ocupacao={0} monitoramento={0} educativo={0} infraestrutura={0} />
+</Base>

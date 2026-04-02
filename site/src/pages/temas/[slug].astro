@@ -1,0 +1,16 @@
+---
+import TopicLayout from '../../layouts/TopicLayout.astro';
+
+export async function getStaticPaths() {
+  return [];
+}
+
+const { slug } = Astro.params;
+const topic = {
+  title: 'Topico nao encontrado',
+  category: 'Geral',
+  summary: 'Este topico ainda nao esta disponivel.',
+};
+---
+
+<TopicLayout {...topic} />

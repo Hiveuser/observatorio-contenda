@@ -1,67 +1,18 @@
 {
   "type": "FeatureCollection",
-  "name": "Contenda-PR",
-  "crs": {
-    "type": "name",
-    "properties": { "name": "urn:ogc:def:crs:EPSG::4326" }
-  },
   "features": [
     {
       "type": "Feature",
-      "properties": {
-        "name": "Municipio de Contenda",
-        "type": "limite_municipal",
-        "ibge_code": "4106209",
-        "state": "PR",
-        "country": "BR"
-      },
       "geometry": {
         "type": "Polygon",
-        "coordinates": [[
-          [-49.62, -25.62],
-          [-49.45, -25.62],
-          [-49.45, -25.73],
-          [-49.62, -25.73],
-          [-49.62, -25.62]
-        ]]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Centro de Contenda",
-        "type": "local",
-        "description": "Centro urbano do municipio"
+        "coordinates": [[[-49.338, -25.497], [-49.338, -25.445], [-49.268, -25.445], [-49.268, -25.497], [-49.338, -25.497]]]
       },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-49.5356, -25.6764]
-      }
-    },
-    {
-      "type": "Feature",
       "properties": {
-        "name": "Praca Central",
-        "type": "local",
-        "description": "Praca principal do centro urbano",
-        "tags": ["arborizacao", "espaco_publico"]
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-49.5348, -25.6753]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Parque Municipal",
-        "type": "local",
-        "description": "Area verde de preservacao municipal",
-        "tags": ["arborizacao", "preservacao"]
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-49.5412, -25.6821]
+        "name": "APM Acquas Claras",
+        "area_ha": 520,
+        "type": "Area de Preservacao Municipal",
+        "municipio": "Curitiba",
+        "status": "Em recuperacao"
       }
     }
   ]

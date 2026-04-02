@@ -1,0 +1,84 @@
+---
+interface Props {
+  centerLat?: number;
+  centerLng?: number;
+  zoom?: number;
+  geojsonUrl?: string;
+  height?: string;
+}
+
+const {
+  centerLat = -25.47,
+  centerLng = -49.30,
+  zoom = 11,
+  geojsonUrl = '/data/iniciativas.geojson',
+  height = '100vh',
+} = Astro.props;
+---
+
+<div id="map" class="map-container" style={`height: ${height}`}></div>
+
+<script define:vars={{ centerLat, centerLng, zoom, geojsonUrl }}>
+  import L from 'https://unpkg.com/leaflet@1.9.4/dist/leaflet-src.esm.js';
+
+  const map = L.map('map', {
+    center: [centerLat, centerLng],
+    zoom: zoom,
+    zoomControl: true,
+    attributionControl: true,
+  });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://carto.com">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 20,
+  }).addTo(map);
+
+  async function loadGeoJSON() {
+    try {
+      const res = await fetch(geojsonUrl);
+      const data = await res.json();
+
+      const getColor = (type) => {
+        const colors = {
+          recuperacao: '#4ade80',
+          ocupacao: '#f87171',
+          monitoramento: '#60a5fa',
+          educativo: '#fbbf24',
+          infraestrutura: '#a78bfa',
+        };
+        return colors[type] || '#4ade80';
+      };
+
+      L.geoJSON(data, {
+        pointToLayer: (feature, latlng) => {
+          return L.circleMarker(latlng, {
+            radius: 10,
+            fillColor: getColor(feature.properties?.tipo),
+            color: '#fff',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.8,
+          });
+        },
+        onEachFeature: (feature, layer) => {
+          if (feature.properties) {
+            const props = feature.properties;
+            let popup = `<div class="popup">`;
+            if (props.name) popup += `<h3>${props.name}</h3>`;
+            if (props.tipo) popup += `<span class="badge ${props.tipo}">${props.tipo}</span>`;
+            if (props.description) popup += `<p>${props.description}</p>`;
+            if (props.municipio) popup += `<small>${props.municipio}</small>`;
+            popup += '</div>';
+            layer.bindPopup(popup);
+          }
+        },
+      }).addTo(map);
+    } catch (err) {
+      console.error('Failed to load GeoJSON:', err);
+    }
+  }
+
+  loadGeoJSON();
+  window.dispatchEvent(new Event('mapReady'));
+</script>

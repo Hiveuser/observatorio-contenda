@@ -1,0 +1,39 @@
+---
+interface Props {
+  total?: number;
+  recuperacao?: number;
+  ocupacao?: number;
+  monitoramento?: number;
+  educativo?: number;
+  infraestrutura?: number;
+}
+
+const { total = 0, recuperacao = 0, ocupacao = 0, monitoramento = 0, educativo = 0, infraestrutura = 0 } = Astro.props;
+---
+
+<div class="stats-bar">
+  <div class="stat">
+    <span class="stat-value">{total}</span>
+    <span class="stat-label">Total</span>
+  </div>
+  <div class="stat">
+    <span class="stat-value recovery">{recuperacao}</span>
+    <span class="stat-label">Recuperacao</span>
+  </div>
+  <div class="stat">
+    <span class="stat-value alert">{ocupacao}</span>
+    <span class="stat-label">Ocupacao</span>
+  </div>
+  <div class="stat">
+    <span class="stat-value info">{monitoramento}</span>
+    <span class="stat-label">Monitoramento</span>
+  </div>
+  <div class="stat">
+    <span class="stat-value warning">{educativo}</span>
+    <span class="stat-label">Educativo</span>
+  </div>
+  <div class="stat">
+    <span class="stat-value purple">{infraestrutura}</span>
+    <span class="stat-label">Infraestrutura</span>
+  </div>
+</div>

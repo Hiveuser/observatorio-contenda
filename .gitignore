@@ -1,40 +1,9 @@
-# Dependencias
 node_modules/
-
-# Build
 dist/
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-.pytest_cache/
-*.egg-info/
-
-# Cache da API
-cache/geocode_cache.db
-api/cache/geocode.db
-
-# Ambiente
+.netlify/
+.vercel/
 .env
-.venv/
-venv/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
+.env.*
+!.env.example
 .DS_Store
-Thumbs.db
-
-# Caddy volumes
-caddy_data/
-caddy_config/
-site/_vault/
-
-# Prebuild output
-site/src/data/
-files_base64.json
+*.log

@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+---
+
+<Base title="Temas">
+  <Header />
+  <main style="padding-top: 80px; max-width: 1200px; margin: 0 auto; padding: 6rem 1.5rem 4rem;">
+    <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">Temas</h1>
+    <p style="color: var(--text-secondary); margin-bottom: 3rem;">Explore os topicos do Observatorio Contenda</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+      <a href="/temas/legislacao-ambiental" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s;">
+        <span style="font-size: 0.75rem; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.05em;">Legislacao</span>
+        <h3 style="font-size: 1.25rem; margin: 0.5rem 0;">Legislacao Ambiental</h3>
+        <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0;">Marco legal da APM Acquas Claras e regioes adjacentes</p>
+      </a>
+      <a href="/temas/monitoramento-erosao" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s;">
+        <span style="font-size: 0.75rem; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 0.05em;">Monitoramento</span>
+        <h3 style="font-size: 1.25rem; margin: 0.5rem 0;">Monitoramento de Erosao</h3>
+        <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0;">Dados geoespaciais sobre processos erosivos na regiao</p>
+      </a>
+      <a href="/temas/ocupacao-irregular" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s;">
+        <span style="font-size: 0.75rem; color: var(--accent-red); text-transform: uppercase; letter-spacing: 0.05em;">Ocupacao</span>
+        <h3 style="font-size: 1.25rem; margin: 0.5rem 0;">Ocupacao Irregular</h3>
+        <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0;">Mapeamento de ocupacoes em areas depreservacao</p>
+      </a>
+    </div>
+  </main>
+</Base>

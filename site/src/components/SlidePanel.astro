@@ -1,0 +1,55 @@
+---
+interface Props {
+  title?: string;
+  subtitle?: string;
+  category?: string;
+  description?: string;
+  status?: string;
+  municipio?: string;
+  date?: string;
+  image?: string;
+  tags?: string[];
+}
+
+const { title, subtitle, category, description, status, municipio, date, image, tags = [] } = Astro.props;
+---
+
+<aside id="slide-panel" class="slide-panel">
+  <div class="panel-header">
+    <button id="close-panel" class="close-btn">&times;</button>
+    {category && <span class="panel-category">{category}</span>}
+  </div>
+  <div class="panel-content">
+    {image && (
+      <img src={image} alt={title} class="panel-image" />
+    )}
+    <h2 class="panel-title">{title}</h2>
+    {subtitle && <p class="panel-subtitle">{subtitle}</p>}
+    <div class="panel-meta">
+      {municipio && (
+        <div class="meta-item">
+          <span class="meta-label">Municipio</span>
+          <span class="meta-value">{municipio}</span>
+        </div>
+      )}
+      {status && (
+        <div class="meta-item">
+          <span class="meta-label">Status</span>
+          <span class="badge" data-status={status}>{status}</span>
+        </div>
+      )}
+      {date && (
+        <div class="meta-item">
+          <span class="meta-label">Data</span>
+          <span class="meta-value">{date}</span>
+        </div>
+      )}
+    </div>
+    {description && <p class="panel-description">{description}</p>}
+    {tags.length > 0 && (
+      <div class="panel-tags">
+        {tags.map((tag) => <span class="tag">{tag}</span>)}
+      </div>
+    )}
+  </div>
+</aside>

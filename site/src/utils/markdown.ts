@@ -1,85 +1,42 @@
-/**
- * Dados de notas do vault.
- * Importa o JSON gerado pelo prebuild.mjs (roda antes do `astro build`).
- * Evita tree-shaking do Rollup/Vite porque e apenas um import estatico.
- */
-
-import notesData from '../data/notes.json';
-
-export interface NoteFrontmatter {
-  titulo: string;
-  tipo: string;
-  status: string;
-  criado_em: string;
-  atualizado_em: string;
-  spatial_status?: string;
-  lat?: number;
-  lon?: number;
-  geom_type?: string;
-  crs?: string;
-  geocode_confidence?: number;
-  geocode_source?: string;
-  admin_country?: string;
-  admin_state?: string;
-  admin_municipality?: string;
-  tags?: string[];
-  aliases?: string[];
-  canonical_name?: string;
-  entity_type?: string;
-  entity_id?: string;
-  geojson_ref?: string;
-  resumo?: string;
-  [key: string]: unknown;
+export function markdownToHtml(md: string): string {
+  let html = md;
+  // Headers
+  html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+  // Bold
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  // Italic
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  // Links
+  html = html.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>');
+  // Lists
+  html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+  html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+  // Paragraphs
+  html = html.replace(/\n\n/g, '</p><p>');
+  html = '<p>' + html + '</p>';
+  // Clean empty tags
+  html = html.replace(/<p><\/p>/g, '');
+  return html;
 }
 
-export interface VaultNote {
-  slug: string;
-  filepath: string;
-  frontmatter: NoteFrontmatter;
-  content: string;
-  html: string;
+export function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim();
 }
 
-const notes: VaultNote[] = notesData as unknown as VaultNote[];
-
-export function getAllNotes(): VaultNote[] {
-  return notes;
-}
-
-export function getNotesByType(tipo: string): VaultNote[] {
-  return notes.filter(n => n.frontmatter.tipo === tipo);
-}
-
-export function getNotesByTag(tag: string): VaultNote[] {
-  return notes.filter(n =>
-    Array.isArray(n.frontmatter.tags) && n.frontmatter.tags.includes(tag)
-  );
-}
-
-export function getGeoNotes(): VaultNote[] {
-  return notes.filter(n =>
-    n.frontmatter.spatial_status === 'georreferenciado' &&
-    typeof n.frontmatter.lat === 'number' &&
-    typeof n.frontmatter.lon === 'number'
-  );
-}
-
-export function getThemes(): { slug: string; name: string; count: number }[] {
-  const tagMap = new Map<string, number>();
-  for (const n of notes) {
-    if (Array.isArray(n.frontmatter.tags)) {
-      for (const t of n.frontmatter.tags) {
-        tagMap.set(t, (tagMap.get(t) || 0) + 1);
-      }
-    }
-  }
-  return Array.from(tagMap.entries()).map(([tag, count]) => ({
-    slug: tag,
-    name: tag.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-    count,
-  })).sort((a, b) => b.count - a.count);
-}
-
-export function getNoteBySlug(slug: string): VaultNote | null {
-  return notes.find(n => n.slug === slug) ?? null;
+export function formatDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  });
 }

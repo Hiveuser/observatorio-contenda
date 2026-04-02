@@ -1,0 +1,31 @@
+---
+interface Props {
+  transparent?: boolean;
+}
+
+const { transparent = false } = Astro.props;
+---
+
+<header class:list={['header', { transparent }]}>
+  <div class="header-left">
+    <a href="/" class="logo">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        <path d="M2 12h20"/>
+      </svg>
+      <span>Observatorio Contenda</span>
+    </a>
+  </div>
+  <nav class="header-nav">
+    <a href="/" class="nav-link">Mapa</a>
+    <a href="/temas" class="nav-link">Temas</a>
+    <a href="/sobre" class="nav-link">Sobre</a>
+  </nav>
+  <div class="header-actions">
+    <button id="add-point-btn" class="btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Adicionar ponto
+    </button>
+  </div>
+</header>

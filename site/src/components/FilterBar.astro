@@ -1,0 +1,29 @@
+---
+interface Props {
+  activeFilter?: string;
+}
+
+const { activeFilter = 'todos' } = Astro.props;
+
+const filters = [
+  { value: 'todos', label: 'Todos', color: '#a0a0a0' },
+  { value: 'recuperacao', label: 'Recuperacao', color: '#4ade80' },
+  { value: 'ocupacao', label: 'Ocupacao', color: '#f87171' },
+  { value: 'monitoramento', label: 'Monitoramento', color: '#60a5fa' },
+  { value: 'educativo', label: 'Educativo', color: '#fbbf24' },
+  { value: 'infraestrutura', label: 'Infraestrutura', color: '#a78bfa' },
+];
+---
+
+<div class="filter-bar">
+  {filters.map((filter) => (
+    <button
+      class:list={['filter-btn', { active: activeFilter === filter.value }]}
+      data-filter={filter.value}
+      style={`--filter-color: ${filter.color}`}
+    >
+      <span class="filter-dot"></span>
+      {filter.label}
+    </button>
+  ))}
+</div>
