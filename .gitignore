@@ -38,3 +38,5 @@ site/_vault/
 # Prebuild output
 site/src/data/
 files_base64.json
+# Astro cache
+site/.astro/

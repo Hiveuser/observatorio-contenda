@@ -1,0 +1,131 @@
+---
+import SpeedInsights from "@vercel/speed-insights/astro";
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = 'Observatorio Contenda', description = 'Observatorio Georreferenciado de Contenda/PR' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <SpeedInsights />
+    <style is:global>
+      :root {
+        --color-primary: #16a34a;
+        --color-primary-dark: #15803d;
+        --color-accent-light: #dcfce7;
+        --color-text: #1f2937;
+        --color-text-muted: #6b7280;
+        --color-text-light: #9ca3af;
+        --color-bg: #ffffff;
+        --color-bg-alt: #f9fafb;
+        --space-xs: 0.25rem;
+        --space-sm: 0.5rem;
+        --space-md: 1rem;
+        --space-lg: 1.5rem;
+        --space-xl: 2rem;
+        --space-2xl: 3rem;
+        --radius-sm: 0.25rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 1rem;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        color: var(--color-text);
+        background: var(--color-bg);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 var(--space-md);
+      }
+
+      .card {
+        background: var(--color-bg);
+        border: 1px solid #e5e7eb;
+        border-radius: var(--radius-md);
+        padding: var(--space-md);
+        transition: box-shadow 0.2s;
+      }
+
+      .card:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      .badge {
+        display: inline-block;
+        font-size: 0.75rem;
+        padding: 0.25em 0.6em;
+        background: var(--color-accent-light);
+        color: var(--color-primary-dark);
+        border-radius: var(--radius-sm);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-xs);
+        padding: var(--space-sm) var(--space-md);
+        background: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius-md);
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .btn:hover {
+        background: var(--color-primary-dark);
+      }
+
+      .btn-primary {
+        background: var(--color-primary);
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        line-height: 1.2;
+        font-weight: 600;
+        color: var(--color-primary-dark);
+      }
+
+      h1 { font-size: 2.25rem; margin-bottom: var(--space-md); }
+      h2 { font-size: 1.875rem; margin-bottom: var(--space-md); }
+      h3 { font-size: 1.5rem; margin-bottom: var(--space-sm); }
+
+      a {
+        color: var(--color-primary);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

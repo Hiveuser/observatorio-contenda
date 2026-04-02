@@ -6,9 +6,7 @@ export default defineConfig({
   site: 'https://observatorio.contenda.pr.gov.br',
   output: 'static',
   integrations: [
-    sitemap({
-      filter: (page) => page !== undefined,
-    }),
+    sitemap(),
   ],
   vite: {
     server: {
