@@ -1,0 +1,19 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-49.338, -25.497], [-49.338, -25.445], [-49.268, -25.445], [-49.268, -25.497], [-49.338, -25.497]]]
+      },
+      "properties": {
+        "name": "APM Acquas Claras",
+        "area_ha": 520,
+        "type": "Area de Preservacao Municipal",
+        "municipio": "Curitiba",
+        "status": "Em recuperacao"
+      }
+    }
+  ]
+}

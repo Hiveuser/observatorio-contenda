@@ -1,0 +1,70 @@
+<!DOCTYPE html><html lang="pt-BR"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="Astro v4.16.19"><title>Mapa | Observatorio Contenda</title><meta name="description" content="Plataforma de mapeamento colaborativo da Regiao Metropolitana de Curitiba."><!-- Open Graph --><meta property="og:title" content="Mapa | Observatorio Contenda"><meta property="og:description" content="Plataforma de mapeamento colaborativo da Regiao Metropolitana de Curitiba."><meta property="og:image" content="https://observatoriocontenda.org/og-image.png"><meta property="og:url" content="https://observatoriocontenda.org"><meta property="og:type" content="website"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Mapa | Observatorio Contenda"><meta name="twitter:description" content="Plataforma de mapeamento colaborativo da Regiao Metropolitana de Curitiba."><meta name="twitter:image" content="https://observatoriocontenda.org/og-image.png"><!-- Fonts --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- Favicon --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- Leaflet CSS --><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><!-- Global Styles --><link rel="stylesheet" href="/styles/global.css"></head> <body>  <header class="header"> <div class="header-left"> <a href="/" class="logo"> <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <circle cx="12" cy="12" r="10"></circle> <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path> <path d="M2 12h20"></path> </svg> <span>Observatorio Contenda</span> </a> </div> <nav class="header-nav"> <a href="/" class="nav-link">Mapa</a> <a href="/temas" class="nav-link">Temas</a> <a href="/sobre" class="nav-link">Sobre</a> </nav> <div class="header-actions"> <button id="add-point-btn" class="btn-primary"> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+Adicionar ponto
+</button> </div> </header> <div class="filter-bar"> <button class="filter-btn active" data-filter="todos" style="--filter-color: #a0a0a0"> <span class="filter-dot"></span> Todos </button><button class="filter-btn" data-filter="recuperacao" style="--filter-color: #4ade80"> <span class="filter-dot"></span> Recuperacao </button><button class="filter-btn" data-filter="ocupacao" style="--filter-color: #f87171"> <span class="filter-dot"></span> Ocupacao </button><button class="filter-btn" data-filter="monitoramento" style="--filter-color: #60a5fa"> <span class="filter-dot"></span> Monitoramento </button><button class="filter-btn" data-filter="educativo" style="--filter-color: #fbbf24"> <span class="filter-dot"></span> Educativo </button><button class="filter-btn" data-filter="infraestrutura" style="--filter-color: #a78bfa"> <span class="filter-dot"></span> Infraestrutura </button> </div> <div id="map" class="map-container" style="height: calc(100vh - 120px)"></div> <script>(function(){const centerLat = -25.47;
+const centerLng = -49.3;
+const zoom = 11;
+const geojsonUrl = "/data/iniciativas.geojson";
+
+  import L from 'https://unpkg.com/leaflet@1.9.4/dist/leaflet-src.esm.js';
+
+  const map = L.map('map', {
+    center: [centerLat, centerLng],
+    zoom: zoom,
+    zoomControl: true,
+    attributionControl: true,
+  });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://carto.com">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 20,
+  }).addTo(map);
+
+  async function loadGeoJSON() {
+    try {
+      const res = await fetch(geojsonUrl);
+      const data = await res.json();
+
+      const getColor = (type) => {
+        const colors = {
+          recuperacao: '#4ade80',
+          ocupacao: '#f87171',
+          monitoramento: '#60a5fa',
+          educativo: '#fbbf24',
+          infraestrutura: '#a78bfa',
+        };
+        return colors[type] || '#4ade80';
+      };
+
+      L.geoJSON(data, {
+        pointToLayer: (feature, latlng) => {
+          return L.circleMarker(latlng, {
+            radius: 10,
+            fillColor: getColor(feature.properties?.tipo),
+            color: '#fff',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.8,
+          });
+        },
+        onEachFeature: (feature, layer) => {
+          if (feature.properties) {
+            const props = feature.properties;
+            let popup = `<div class="popup">`;
+            if (props.name) popup += `<h3>${props.name}</h3>`;
+            if (props.tipo) popup += `<span class="badge ${props.tipo}">${props.tipo}</span>`;
+            if (props.description) popup += `<p>${props.description}</p>`;
+            if (props.municipio) popup += `<small>${props.municipio}</small>`;
+            popup += '</div>';
+            layer.bindPopup(popup);
+          }
+        },
+      }).addTo(map);
+    } catch (err) {
+      console.error('Failed to load GeoJSON:', err);
+    }
+  }
+
+  loadGeoJSON();
+  window.dispatchEvent(new Event('mapReady'));
+})();</script> <div class="stats-bar"> <div class="stat"> <span class="stat-value">0</span> <span class="stat-label">Total</span> </div> <div class="stat"> <span class="stat-value recovery">0</span> <span class="stat-label">Recuperacao</span> </div> <div class="stat"> <span class="stat-value alert">0</span> <span class="stat-label">Ocupacao</span> </div> <div class="stat"> <span class="stat-value info">0</span> <span class="stat-label">Monitoramento</span> </div> <div class="stat"> <span class="stat-value warning">0</span> <span class="stat-label">Educativo</span> </div> <div class="stat"> <span class="stat-value purple">0</span> <span class="stat-label">Infraestrutura</span> </div> </div>  </body></html>
