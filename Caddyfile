@@ -1,0 +1,11 @@
+# Caddy reverse proxy -- desenvolvimento local
+# site.localhost -> frontend Astro/Nginx
+# api.localhost  -> backend FastAPI
+
+site.localhost {
+	reverse_proxy site:80
+}
+
+api.localhost {
+	reverse_proxy api:8000
+}
