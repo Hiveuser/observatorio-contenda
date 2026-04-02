@@ -1,6 +1,4 @@
 {
   "buildCommand": "cd site && ./node_modules/.bin/tsx prebuild.mjs && astro build",
-  "outputDirectory": "dist",
-  "installCommand": "cd site && npm install",
-  "framework": "astro"
+  "outputDirectory": "dist"
 }
