@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --floresta-950: #0d1a0d;
+  --floresta-900: #1a2e1a;
+  --floresta-800: #233823;
+  --floresta-700: #2e4a2e;
+  --pergaminho-100: #f5f0e8;
+  --pergaminho-200: #ede3cc;
+  --terracota-500: #c45c2a;
+  --terracota-400: #d97050;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--floresta-950);
+  color: var(--pergaminho-100);
+  font-family: 'Source Serif 4', Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Contour line background pattern */
+.contour-bg {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 39px,
+      rgba(74, 122, 74, 0.06) 39px,
+      rgba(74, 122, 74, 0.06) 40px
+    );
+}
+
+/* Grain overlay */
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 9999;
+}
+
+/* Leaflet overrides */
+.leaflet-container {
+  background: var(--floresta-900) !important;
+  font-family: 'DM Sans', sans-serif !important;
+}
+
+.leaflet-tile-pane {
+  filter: saturate(0.7) brightness(0.8);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--floresta-950);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--floresta-700);
+  border-radius: 3px;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes lineGrow {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.7s ease forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+/* Data table aesthetics */
+.data-table th {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.5);
+  border-bottom: 1px solid rgba(74, 122, 74, 0.3);
+  padding: 0.6rem 1rem;
+}
+
+.data-table td {
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.9rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid rgba(74, 122, 74, 0.12);
+}
+
+.data-table tr:hover td {
+  background: rgba(74, 122, 74, 0.08);
+}
+
+/* Indicador card */
+.indicador-card {
+  border: 1px solid rgba(74, 122, 74, 0.25);
+  background: rgba(35, 56, 35, 0.4);
+  backdrop-filter: blur(8px);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.indicador-card:hover {
+  border-color: rgba(196, 92, 42, 0.5);
+  background: rgba(35, 56, 35, 0.6);
+}
+
+/* Section divider */
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(74, 122, 74, 0.4), transparent);
+}
+
+/* Nav link */
+.nav-link {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.6);
+  transition: color 0.2s;
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--terracota-500);
+  transition: width 0.3s;
+}
+
+.nav-link:hover {
+  color: var(--pergaminho-100);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Status badge */
+.badge-critico { background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); }
+.badge-alto    { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+.badge-medio   { background: rgba(96, 165, 250, 0.15); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); }
+.badge-ok      { background: rgba(74, 222, 128, 0.15); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3); }

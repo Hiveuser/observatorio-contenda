@@ -1,0 +1,181 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = 'Observatório agrícola e ambiental de Contenda/PR — dados, diagnósticos e planejamento territorial.',
+  ogImage = '/og.png',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const pageTitle = title === 'Observatório Contenda/PR' ? title : `${title} — Observatório Contenda/PR`;
+---
+
+<!doctype html>
+<html lang="pt-BR" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+
+    <title>{pageTitle}</title>
+  </head>
+
+  <body class="min-h-screen grain contour-bg">
+    <!-- Navigation -->
+    <header class="fixed top-0 left-0 right-0 z-50" id="site-header">
+      <nav class="border-b border-floresta-800/60 bg-floresta-950/90 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+
+          <!-- Logo mark -->
+          <a href="/" class="flex items-center gap-3 group">
+            <div class="w-8 h-8 rounded-full border border-floresta-600 flex items-center justify-center
+                        group-hover:border-terracota-500 transition-colors duration-300">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.2" class="text-floresta-500 group-hover:text-terracota-400 transition-colors"/>
+                <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="0.5" class="text-floresta-700"/>
+                <line x1="8" y1="1" x2="8" y2="15" stroke="currentColor" stroke-width="0.5" class="text-floresta-700"/>
+                <line x1="1" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="0.5" class="text-floresta-700"/>
+              </svg>
+            </div>
+            <div>
+              <span class="font-display font-bold text-pergaminho-100 text-sm">Observatório</span>
+              <span class="font-data text-xs text-floresta-500 ml-1 tracking-wider">CONTENDA/PR</span>
+            </div>
+          </a>
+
+          <!-- Nav links -->
+          <div class="hidden md:flex items-center gap-8">
+            <a href="/" class="nav-link">Início</a>
+            <a href="/diagnostico" class="nav-link">Diagnóstico</a>
+            <a href="/planejamento" class="nav-link">Planejamento</a>
+            <a href="/legislacao" class="nav-link">Legislação</a>
+            <a href="/sobre" class="nav-link">Sobre</a>
+          </div>
+
+          <!-- Coords tag -->
+          <div class="hidden lg:block font-mono text-xs text-floresta-600 tracking-wider">
+            25°36'S 49°14'W
+          </div>
+
+          <!-- Mobile menu button -->
+          <button id="menu-toggle" class="md:hidden text-pergaminho-200 hover:text-terracota-400 transition-colors" aria-label="Menu">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-floresta-800/40 px-6 py-4 flex flex-col gap-4">
+          <a href="/" class="nav-link">Início</a>
+          <a href="/diagnostico" class="nav-link">Diagnóstico</a>
+          <a href="/planejamento" class="nav-link">Planejamento</a>
+          <a href="/legislacao" class="nav-link">Legislação</a>
+          <a href="/sobre" class="nav-link">Sobre</a>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main content -->
+    <main class="pt-16">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-floresta-800/40 mt-24 py-12">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div>
+            <p class="font-display text-lg font-semibold text-pergaminho-100 mb-2">Observatório Contenda/PR</p>
+            <p class="font-body text-sm text-pergaminho-200/50 leading-relaxed">
+              Plataforma de dados agrícolas, ambientais e territoriais do município de Contenda, Paraná.
+            </p>
+          </div>
+          <div>
+            <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-3">Dados</p>
+            <ul class="space-y-1 text-sm font-body text-pergaminho-200/60">
+              <li>IBGE · Censo 2022</li>
+              <li>IAT-PR · Zoneamento Ecológico</li>
+              <li>INMET · Climatologia 30 anos</li>
+              <li>MapBiomas · Cobertura 2023</li>
+              <li>IDR-PR (ex-EMATER)</li>
+            </ul>
+          </div>
+          <div>
+            <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-3">Município</p>
+            <ul class="space-y-1 text-sm font-mono text-pergaminho-200/60">
+              <li>313,93 km² · 17.197 hab</li>
+              <li>Bioma Mata Atlântica</li>
+              <li>Clima Cfb (Köppen)</li>
+              <li>RMC — Paraná, Brasil</li>
+              <li>Fact-checked: 2026-03-30</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider mt-10 mb-6"></div>
+        <p class="text-center font-mono text-xs text-floresta-700">
+          © 2026 Observatório Contenda/PR · Dados abertos · MIT
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // Mobile menu toggle
+      const toggle = document.getElementById('menu-toggle');
+      const menu = document.getElementById('mobile-menu');
+      toggle?.addEventListener('click', () => {
+        menu?.classList.toggle('hidden');
+      });
+
+      // Header scroll effect
+      const header = document.getElementById('site-header');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 60) {
+          header?.querySelector('nav')?.classList.add('shadow-lg', 'shadow-black/20');
+        } else {
+          header?.querySelector('nav')?.classList.remove('shadow-lg', 'shadow-black/20');
+        }
+      });
+
+      // Intersection observer for fade-up animations
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              (entry.target as HTMLElement).style.opacity = '1';
+              (entry.target as HTMLElement).style.transform = 'translateY(0)';
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      document.querySelectorAll('[data-animate]').forEach((el) => {
+        (el as HTMLElement).style.opacity = '0';
+        (el as HTMLElement).style.transform = 'translateY(24px)';
+        (el as HTMLElement).style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+      });
+    </script>
+  </body>
+</html>

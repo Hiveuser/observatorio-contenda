@@ -1,0 +1,71 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Página não encontrada"
+  description="Página não encontrada — retorne ao início do Observatório Contenda/PR."
+>
+
+  <section class="min-h-[80vh] flex items-center justify-center px-6 pt-20 pb-20">
+    <div class="text-center max-w-2xl">
+      <!-- 404 -->
+      <div class="mb-8">
+        <p class="font-display font-black text-8xl md:text-9xl text-floresta-700/60 leading-none">
+          404
+        </p>
+      </div>
+
+      <!-- Subtitle -->
+      <h1 class="font-display text-4xl md:text-5xl font-bold text-pergaminho-100 mb-4">
+        Página não encontrada
+      </h1>
+
+      <!-- Description -->
+      <p class="font-body text-lg text-pergaminho-200/60 mb-8 leading-relaxed max-w-xl mx-auto">
+        Parece que você se perdeu no território. Esta página não existe no Observatório Contenda/PR.
+      </p>
+
+      <!-- Coordinates aesthetic -->
+      <div class="mb-12">
+        <p class="font-mono text-sm text-floresta-600 tracking-wider">
+          25°36'S 49°14'W (local real) / /404 (rota perdida)
+        </p>
+      </div>
+
+      <!-- CTA -->
+      <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
+        <a href="/"
+           class="inline-flex items-center gap-2 bg-terracota-500 hover:bg-terracota-400 text-pergaminho-50
+                  font-data text-sm font-medium px-6 py-3 rounded-sm transition-colors duration-200">
+          Voltar ao início
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Secondary nav hints -->
+      <div data-animate class="mt-16 pt-12 border-t border-floresta-800/40">
+        <p class="font-data text-xs uppercase tracking-widest text-floresta-600 mb-6">
+          Navegue para
+        </p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { href: '/', label: 'Início' },
+            { href: '/diagnostico', label: 'Diagnóstico' },
+            { href: '/planejamento', label: 'Planejamento' },
+            { href: '/legislacao', label: 'Legislação' },
+            { href: '/sobre', label: 'Sobre' },
+          ].map((link) => (
+            <a href={link.href}
+               class="font-body text-sm text-pergaminho-200/70 hover:text-terracota-400 transition-colors">
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+</Base>

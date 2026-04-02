@@ -1,0 +1,398 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Observatório Contenda/PR" description="Plataforma de dados agrícolas, ambientais e territoriais de Contenda/PR — diagnóstico, planejamento e legislação.">
+
+  <!-- HERO: Map + Title -->
+  <section class="relative h-[92vh] min-h-[600px] overflow-hidden">
+
+    <!-- Leaflet map (full bleed) -->
+    <div id="mapa-hero" class="absolute inset-0 z-0"></div>
+
+    <!-- Dark overlay with gradient -->
+    <div class="absolute inset-0 z-10"
+         style="background: linear-gradient(to bottom, rgba(13,26,13,0.3) 0%, rgba(13,26,13,0.1) 40%, rgba(13,26,13,0.85) 85%, rgba(13,26,13,1) 100%);">
+    </div>
+
+    <!-- Left edge: coordinate ruler decoration -->
+    <div class="absolute left-0 top-0 bottom-0 w-12 z-20 flex flex-col justify-between py-24 pl-4 border-r border-floresta-800/30">
+      {['25°30\'', '25°33\'', '25°36\'', '25°39\'', '25°42\''].map((coord, i) => (
+        <span class="font-mono text-[9px] text-floresta-600 rotate-90 whitespace-nowrap origin-left ml-2">{coord}</span>
+      ))}
+    </div>
+
+    <!-- Hero content -->
+    <div class="relative z-20 h-full flex flex-col justify-end pb-16 px-6 md:px-16 max-w-7xl mx-auto">
+
+      <!-- Eyebrow -->
+      <div class="flex items-center gap-3 mb-5 animate-fade-up" style="animation-delay:0.1s">
+        <div class="w-2 h-2 rounded-full bg-terracota-500 animate-pulse"></div>
+        <span class="font-data text-xs tracking-widest uppercase text-terracota-400">
+          Observatório Territorial · Contenda/PR · RMC
+        </span>
+      </div>
+
+      <!-- Main heading -->
+      <h1 class="font-display font-black text-5xl md:text-7xl lg:text-8xl text-pergaminho-100 leading-[0.95] mb-6 animate-fade-up"
+          style="animation-delay:0.2s">
+        Contenda<br/>
+        <span class="italic text-floresta-500 font-normal">por dentro</span>
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="font-body text-base md:text-lg text-pergaminho-200/70 max-w-lg mb-10 leading-relaxed animate-fade-up"
+         style="animation-delay:0.3s">
+        Dados agrícolas, ambientais e territoriais do município.
+        Diagnóstico completo para gestores, produtores e pesquisadores.
+      </p>
+
+      <!-- CTA + stats strip -->
+      <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center animate-fade-up"
+           style="animation-delay:0.4s">
+        <a href="/diagnostico"
+           class="inline-flex items-center gap-2 bg-terracota-500 hover:bg-terracota-400 text-pergaminho-50
+                  font-data text-sm font-medium px-6 py-3 rounded-sm transition-colors duration-200">
+          Ver Diagnóstico
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+          </svg>
+        </a>
+        <a href="/planejamento"
+           class="inline-flex items-center gap-2 border border-floresta-600/60 hover:border-floresta-500
+                  text-pergaminho-200/80 hover:text-pergaminho-100 font-data text-sm px-6 py-3 rounded-sm transition-colors duration-200">
+          Plano Estratégico
+        </a>
+      </div>
+    </div>
+
+    <!-- Map attribution badge -->
+    <div class="absolute bottom-4 right-4 z-20 font-mono text-[9px] text-floresta-700 text-right">
+      25°36'S 49°14'W · alt. ~910m
+    </div>
+  </section>
+
+  <!-- INDICADORES CRÍTICOS -->
+  <section class="py-20 px-6 max-w-7xl mx-auto">
+    <div data-animate class="mb-12">
+      <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-2">Indicadores</p>
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-pergaminho-100">
+        O município em números
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      {[
+        { valor: '17.197', unidade: 'habitantes', label: 'Censo 2022', cor: 'text-dado-azul' },
+        { valor: '313,93', unidade: 'km²', label: 'Área total', cor: 'text-floresta-500' },
+        { valor: 'R$ 380Mi', unidade: '/ano', label: 'PIB Agropecuário', cor: 'text-dado-verde' },
+        { valor: '58%', unidade: 'leite', label: 'Do PIB agro', cor: 'text-dado-amarelo' },
+        { valor: '42%', unidade: 'CAR', label: 'Propriedades regularizadas', cor: 'text-dado-vermelho' },
+        { valor: '70%', unidade: 'RL irregular', label: 'Reserva Legal', cor: 'text-dado-vermelho' },
+      ].map((item, i) => (
+        <div data-animate class="indicador-card rounded-sm p-5" style={`animation-delay:${i * 0.07}s`}>
+          <p class={`font-display font-bold text-2xl md:text-3xl leading-none mb-1 ${item.cor}`}>
+            {item.valor}
+          </p>
+          <p class="font-mono text-xs text-pergaminho-200/40 mb-2">{item.unidade}</p>
+          <p class="font-data text-xs text-pergaminho-200/60 leading-tight">{item.label}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- ALERTAS CRÍTICOS -->
+  <section class="py-20 px-6 max-w-7xl mx-auto">
+    <div data-animate class="mb-12">
+      <p class="font-data text-xs tracking-widest uppercase text-dado-vermelho/70 mb-2">⚠ Prioridade máxima</p>
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-pergaminho-100">
+        3 problemas críticos
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      {[
+        {
+          num: '01',
+          titulo: 'Reserva Legal Insuficiente',
+          desc: '70% das 1.800 propriedades com RL abaixo de 20%, o mínimo exigido pelo Código Florestal (Lei 12.651/2012).',
+          risco: 'Multas R$ 500–10.000/ha',
+          href: '/legislacao',
+        },
+        {
+          num: '02',
+          titulo: 'CAR com 42% de Adesão',
+          desc: 'Prazo de regularização do Cadastro Ambiental Rural expirando. 58% das propriedades sem CAR ativo.',
+          risco: 'Bloqueio de crédito rural',
+          href: '/diagnostico',
+        },
+        {
+          num: '03',
+          titulo: 'Preço do Leite no Limite',
+          desc: 'R$ 1,10/L — margem zero para produtores. 58% do PIB agropecuário em risco de colapso econômico.',
+          risco: 'R$ 220 Mi/ano em risco',
+          href: '/planejamento',
+        },
+      ].map((item, i) => (
+        <a data-animate href={item.href}
+           class="indicador-card rounded-sm p-8 block group"
+           style={`animation-delay:${i * 0.1}s`}>
+          <span class="font-mono text-5xl font-bold text-floresta-800 block mb-6 leading-none
+                       group-hover:text-floresta-700 transition-colors">
+            {item.num}
+          </span>
+          <h3 class="font-display text-xl font-bold text-pergaminho-100 mb-3 group-hover:text-terracota-400 transition-colors">
+            {item.titulo}
+          </h3>
+          <p class="font-body text-sm text-pergaminho-200/60 leading-relaxed mb-5">
+            {item.desc}
+          </p>
+          <span class="inline-block badge-critico font-mono text-[10px] px-2 py-1 rounded-sm">
+            {item.risco}
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- SOLUÇÕES PRIORITÁRIAS -->
+  <section class="py-20 px-6 max-w-7xl mx-auto">
+    <div data-animate class="mb-12">
+      <p class="font-data text-xs tracking-widest uppercase text-dado-verde/70 mb-2">Ações imediatas</p>
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-pergaminho-100">
+        3 soluções prioritárias
+      </h2>
+    </div>
+
+    <div class="space-y-4">
+      {[
+        {
+          prazo: '90 dias',
+          titulo: 'Campanha CAR/RL',
+          desc: 'Meta: 80% das propriedades regularizadas. Custo estimado: R$ 135.000. Evita bloqueio de crédito rural e multas por descumprimento do Código Florestal.',
+          badge: 'badge-critico',
+          badgeText: 'Urgente',
+          href: '/planejamento',
+        },
+        {
+          prazo: '180 dias',
+          titulo: 'Programa Leite Premium',
+          desc: 'Meta: R$ 1,40/L (+27%). Investimento de R$ 28.000/propriedade. Qualificação do leite para mercado premium via certificação e resfriamento.',
+          badge: 'badge-alto',
+          badgeText: 'Alta prioridade',
+          href: '/planejamento',
+        },
+        {
+          prazo: '90 dias para início',
+          titulo: 'PMAU — Plano Municipal de Arborização Urbana',
+          desc: 'Evitar passivo judicial de R$ 50k–500k/árvore de risco. Obrigatório por lei estadual. Parceria COPEL pode reduzir 60% dos custos.',
+          badge: 'badge-medio',
+          badgeText: 'Obrigatório por lei',
+          href: '/legislacao',
+        },
+      ].map((item, i) => (
+        <a data-animate href={item.href}
+           class="indicador-card rounded-sm p-6 flex flex-col sm:flex-row sm:items-center gap-6 group block"
+           style={`animation-delay:${i * 0.1}s`}>
+          <div class="sm:w-28 flex-shrink-0">
+            <span class="font-mono text-xs text-floresta-500 block">{item.prazo}</span>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-display text-lg font-bold text-pergaminho-100 mb-1 group-hover:text-terracota-400 transition-colors">
+              {item.titulo}
+            </h3>
+            <p class="font-body text-sm text-pergaminho-200/60 leading-relaxed">
+              {item.desc}
+            </p>
+          </div>
+          <div class="sm:w-36 flex-shrink-0 flex sm:justify-end">
+            <span class={`inline-block ${item.badge} font-mono text-[10px] px-2 py-1 rounded-sm`}>
+              {item.badgeText}
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- CLIMA / BALANÇO HÍDRICO -->
+  <section class="py-20 px-6 max-w-7xl mx-auto">
+    <div data-animate class="mb-12">
+      <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-2">Clima · Cfb Köppen</p>
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-pergaminho-100">
+        Balanço hídrico mensal
+      </h2>
+      <p class="font-body text-sm text-pergaminho-200/50 mt-2">
+        Climatologia 30 anos · INMET A807 Curitiba · 25°26'S, 49°14'W, 934m
+      </p>
+    </div>
+
+    <div data-animate class="overflow-x-auto">
+      <table class="data-table w-full">
+        <thead>
+          <tr>
+            <th class="text-left">Mês</th>
+            <th class="text-right">ET₀ (mm)</th>
+            <th class="text-right">Precip. (mm)</th>
+            <th class="text-right">Balanço (mm)</th>
+            <th class="text-left">T. Mín / Máx (°C)</th>
+            <th class="text-left">Risco</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[
+            { mes: 'Janeiro',   et0: 117.8, prec: 170, bal: 52.2,  tmin: 18.0, tmax: 27.5, risco: '', atual: false },
+            { mes: 'Fevereiro', et0: 98.0,  prec: 150, bal: 52.0,  tmin: 18.2, tmax: 27.0, risco: '', atual: false },
+            { mes: 'Março',     et0: 99.2,  prec: 130, bal: 30.8,  tmin: 17.0, tmax: 26.5, risco: 'Normal', atual: true },
+            { mes: 'Abril',     et0: 78.0,  prec: 110, bal: 32.0,  tmin: 14.5, tmax: 23.5, risco: '', atual: false },
+            { mes: 'Maio',      et0: 62.0,  prec: 120, bal: 58.0,  tmin: 11.5, tmax: 20.0, risco: '❄ Geada', atual: false },
+            { mes: 'Junho',     et0: 48.0,  prec: 130, bal: 82.0,  tmin: 10.0, tmax: 18.5, risco: '❄ Geada', atual: false },
+            { mes: 'Julho',     et0: 46.5,  prec: 115, bal: 68.5,  tmin:  9.5, tmax: 18.0, risco: '❄ Geada', atual: false },
+            { mes: 'Agosto',    et0: 55.8,  prec: 100, bal: 44.2,  tmin: 10.5, tmax: 19.5, risco: '❄ Geada residual', atual: false },
+            { mes: 'Setembro',  et0: 72.0,  prec: 130, bal: 58.0,  tmin: 12.5, tmax: 21.0, risco: '', atual: false },
+            { mes: 'Outubro',   et0: 93.0,  prec: 150, bal: 57.0,  tmin: 14.5, tmax: 23.0, risco: '', atual: false },
+            { mes: 'Novembro',  et0: 102.0, prec: 140, bal: 38.0,  tmin: 16.0, tmax: 25.0, risco: '', atual: false },
+            { mes: 'Dezembro',  et0: 114.7, prec: 160, bal: 45.3,  tmin: 17.5, tmax: 26.5, risco: '', atual: false },
+          ].map((row) => (
+            <tr class={row.atual ? 'bg-floresta-800/20' : ''}>
+              <td class="font-body">
+                {row.mes}
+                {row.atual && <span class="ml-2 badge-ok font-mono text-[9px] px-1.5 py-0.5 rounded-sm">atual</span>}
+              </td>
+              <td class="text-right font-mono text-sm text-pergaminho-200/70">{row.et0}</td>
+              <td class="text-right font-mono text-sm text-dado-azul">{row.prec}</td>
+              <td class="text-right font-mono text-sm text-dado-verde">+{row.bal}</td>
+              <td class="font-mono text-xs text-pergaminho-200/60">
+                {row.tmin} / {row.tmax}
+              </td>
+              <td>
+                {row.risco && (
+                  <span class="font-mono text-[10px] text-dado-amarelo/70">{row.risco}</span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <p data-animate class="mt-4 font-body text-xs text-pergaminho-200/30 italic">
+      Nota: Todos os meses apresentam balanço hídrico positivo. O problema real é drenagem, não falta d'água.
+    </p>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- PIB AGROPECUÁRIO -->
+  <section class="py-20 px-6 max-w-7xl mx-auto">
+    <div data-animate class="mb-12">
+      <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-2">Economia</p>
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-pergaminho-100">
+        PIB Agropecuário
+        <span class="text-floresta-500 font-normal italic ml-3 text-2xl">R$ 380 Mi/ano</span>
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-10 items-center">
+      <!-- Bar chart -->
+      <div data-animate class="space-y-4">
+        {[
+          { label: 'Leite (principal)', valor: 220, pct: 58, cor: 'bg-dado-verde' },
+          { label: 'Milho / Grãos', valor: 95, pct: 25, cor: 'bg-dado-azul' },
+          { label: 'Batata', valor: 38, pct: 10, cor: 'bg-dado-amarelo' },
+          { label: 'SAF + outros', valor: 27, pct: 7, cor: 'bg-floresta-500' },
+        ].map((item, i) => (
+          <div style={`animation-delay:${i * 0.1}s`}>
+            <div class="flex justify-between mb-1.5">
+              <span class="font-data text-sm text-pergaminho-200/80">{item.label}</span>
+              <span class="font-mono text-sm text-pergaminho-200/60">
+                R$ {item.valor}Mi · {item.pct}%
+              </span>
+            </div>
+            <div class="h-2 bg-floresta-800/60 rounded-full overflow-hidden">
+              <div
+                class={`h-full ${item.cor} rounded-full transition-all duration-1000`}
+                style={`width: ${item.pct}%`}
+              ></div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Oportunidades -->
+      <div data-animate>
+        <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-4">Oportunidades mapeadas</p>
+        <ul class="space-y-3">
+          {[
+            { icon: '🥛', text: 'Leite Premium: meta R$ 1,40/L (+27%) em 180 dias' },
+            { icon: '🌽', text: 'Milho: Contenda entre líderes em exportação no PR (R$ 1,8 Bi VBP regional)' },
+            { icon: '🥔', text: 'Batata: IDR-PR desenvolvendo cultivares > 4,5 t/ha' },
+            { icon: '🌳', text: 'Crédito de Carbono REDD+: R$ 20–50/ha/ano via Reserva Legal' },
+            { icon: '🏡', text: 'Turismo Rural: 79 atrativos em 115 km · Herança polonesa' },
+          ].map((item) => (
+            <li class="flex gap-3 items-start">
+              <span class="text-base mt-0.5">{item.icon}</span>
+              <span class="font-body text-sm text-pergaminho-200/70 leading-relaxed">{item.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAPA LEAFLET INIT -->
+  <script>
+    import L from 'leaflet';
+
+    const map = L.map('mapa-hero', {
+      center: [-25.60, -49.24],
+      zoom: 12,
+      zoomControl: false,
+      attributionControl: false,
+      dragging: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      touchZoom: false,
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+    }).addTo(map);
+
+    // Marker at Contenda center
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="
+        width: 12px; height: 12px;
+        background: #c45c2a;
+        border-radius: 50%;
+        border: 2px solid #f5f0e8;
+        box-shadow: 0 0 0 4px rgba(196,92,42,0.3);
+      "></div>`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6],
+    });
+
+    L.marker([-25.60, -49.24], { icon }).addTo(map)
+      .bindPopup('<strong>Contenda/PR</strong><br/>25°36\'S 49°14\'W')
+      .openPopup();
+
+    // Rough Contenda boundary approximation
+    const bounds = L.latLngBounds(
+      [-25.46, -49.36],
+      [-25.72, -49.12]
+    );
+    L.rectangle(bounds, {
+      color: '#4a7a4a',
+      weight: 1,
+      fillOpacity: 0.05,
+      dashArray: '4 6',
+    }).addTo(map);
+  </script>
+</Base>

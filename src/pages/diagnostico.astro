@@ -1,0 +1,203 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Diagnóstico Ambiental"
+  description="Diagnóstico ambiental completo de Contenda/PR — solo, clima, água, CAR, Reserva Legal e cobertura vegetal."
+>
+
+  <!-- PAGE HERO -->
+  <section class="pt-20 pb-16 px-6 max-w-7xl mx-auto">
+    <div class="mb-12">
+      <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-3">Diagnóstico · Ambiental</p>
+      <h1 class="font-display font-black text-5xl md:text-6xl text-pergaminho-100 leading-tight mb-4">
+        Diagnóstico<br/>
+        <span class="italic font-normal text-floresta-500">Ambiental</span>
+      </h1>
+      <p class="font-body text-lg text-pergaminho-200/60 max-w-2xl leading-relaxed">
+        Síntese do diagnóstico territorial de Contenda/PR. 48 fontes verificadas,
+        fact-checked em 30/03/2026. Cobre solo, clima, recursos hídricos, floresta e CAR.
+      </p>
+    </div>
+    <div class="divider"></div>
+  </section>
+
+  <!-- SOLO -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Solo
+    </h2>
+
+    <div class="grid md:grid-cols-2 gap-10">
+      <div data-animate>
+        <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-4">Classes dominantes</p>
+        <table class="data-table w-full">
+          <thead>
+            <tr>
+              <th class="text-left">Classe</th>
+              <th class="text-left">Sigla</th>
+              <th class="text-right">% Área</th>
+              <th class="text-left">Aptidão</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { classe: 'Latossolo Vermelho-Amarelo', sigla: 'LVA', pct: '45%', apt: 'Lavoura/pastagem' },
+              { classe: 'Podzólico Vermelho-Amarelo', sigla: 'PV', pct: '30%', apt: 'Lavoura/pastagem' },
+              { classe: 'Cambissolo', sigla: 'C', pct: '15%', apt: 'Pastagem/florestal' },
+              { classe: 'Gleissolo / Hidromórfico', sigla: 'G', pct: '10%', apt: 'Preservação / APP' },
+            ].map((row) => (
+              <tr>
+                <td class="font-body text-sm">{row.classe}</td>
+                <td class="font-mono text-xs text-floresta-400">{row.sigla}</td>
+                <td class="text-right font-mono text-sm">{row.pct}</td>
+                <td class="font-data text-xs text-pergaminho-200/60">{row.apt}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div data-animate class="space-y-4">
+        <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-4">Características pedológicas</p>
+        {[
+          { item: 'Textura', val: 'Argilosa a muito argilosa (40–70% argila)' },
+          { item: 'pH médio', val: '4,8–5,5 (ácido) — necessita calagem' },
+          { item: 'Matéria orgânica', val: '2–4% (adequado para Cfb)' },
+          { item: 'Erosão', val: 'Moderada em áreas sem cobertura — relevo ondulado' },
+          { item: 'Problema crítico', val: 'Compactação em áreas de pastagem intensiva' },
+          { item: 'SAF recomendado', val: 'Faixas de milho × bracatinga × guanandi' },
+        ].map((row) => (
+          <div class="flex gap-4 items-start">
+            <span class="font-mono text-[10px] text-floresta-600 uppercase whitespace-nowrap w-28 flex-shrink-0 pt-0.5">
+              {row.item}
+            </span>
+            <span class="font-body text-sm text-pergaminho-200/70 leading-relaxed">{row.val}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- FLORESTA + CAR -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Floresta · CAR · Reserva Legal
+    </h2>
+
+    <div class="grid md:grid-cols-3 gap-6 mb-10">
+      {[
+        { label: 'Cobertura Florestal', val: '38%', sub: 'Mata Atlântica remanescente · MapBiomas 2023', cor: 'text-floresta-500' },
+        { label: 'CAR Regularizado', val: '42%', sub: 'das 1.800 propriedades · Prazo expirando', cor: 'text-dado-vermelho' },
+        { label: 'RL Adequada', val: '30%', sub: 'das propriedades cumprem os 20% obrigatórios', cor: 'text-dado-vermelho' },
+      ].map((item, i) => (
+        <div data-animate class="indicador-card rounded-sm p-6" style={`animation-delay:${i*0.1}s`}>
+          <p class={`font-display font-bold text-4xl mb-2 ${item.cor}`}>{item.val}</p>
+          <p class="font-data text-sm font-medium text-pergaminho-100 mb-1">{item.label}</p>
+          <p class="font-body text-xs text-pergaminho-200/50 leading-relaxed">{item.sub}</p>
+        </div>
+      ))}
+    </div>
+
+    <div data-animate class="indicador-card rounded-sm p-6 border-l-2 border-dado-vermelho/40">
+      <p class="font-data text-xs tracking-widest uppercase text-dado-vermelho/70 mb-3">⚠ Análise de risco</p>
+      <p class="font-body text-sm text-pergaminho-200/70 leading-relaxed mb-4">
+        A armadilha legal-ecológica de Contenda: a RL obrigatória é de 20% (Mata Atlântica, pequena propriedade)
+        mas 70% das propriedades têm fragmentos isolados insuficientes. A recomposição via SAF de bracatinga
+        é economicamente viável e cumpre a lei — mas requer assistência técnica que atinge apenas 20% dos produtores.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <span class="badge-critico font-mono text-[10px] px-2 py-1 rounded-sm">Multas até R$ 10.000/ha</span>
+        <span class="badge-alto font-mono text-[10px] px-2 py-1 rounded-sm">Bloqueio de crédito rural</span>
+        <span class="badge-medio font-mono text-[10px] px-2 py-1 rounded-sm">Solução: PRA + SAF</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- RECURSOS HÍDRICOS -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Recursos Hídricos
+    </h2>
+
+    <div class="grid md:grid-cols-2 gap-10">
+      <div data-animate>
+        <table class="data-table w-full">
+          <thead>
+            <tr>
+              <th class="text-left">Parâmetro</th>
+              <th class="text-right">Valor</th>
+              <th class="text-left">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { param: 'Aquífero', val: 'Fraturado Cristalino', status: '', cor: '' },
+              { param: 'Coliformes totais', val: '15× acima limite IAT', status: 'Crítico', cor: 'badge-critico' },
+              { param: 'Precipitação anual', val: '~1.400 mm', status: 'OK', cor: 'badge-ok' },
+              { param: 'Balanço hídrico', val: 'Superávit todos os meses', status: 'OK', cor: 'badge-ok' },
+              { param: 'Prob. real', val: 'Drenagem (não irrigação)', status: 'Atenção', cor: 'badge-alto' },
+              { param: 'Bacía', val: 'Água Claras (sub)', status: '', cor: '' },
+            ].map((row) => (
+              <tr>
+                <td class="font-body text-sm">{row.param}</td>
+                <td class="text-right font-mono text-xs text-pergaminho-200/60">{row.val}</td>
+                <td>
+                  {row.status && (
+                    <span class={`${row.cor} font-mono text-[9px] px-1.5 py-0.5 rounded-sm`}>{row.status}</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div data-animate class="space-y-4">
+        <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-4">Recomendações</p>
+        {[
+          'Coliformes 15× acima do limite IAT-PR indica contaminação por efluentes pecuários — prioridade de adequação de currais e fossas.',
+          'Aquífero Fraturado Cristalino tem baixa capacidade de armazenamento — vulnerável a contaminação pontual.',
+          'Drenagem deficiente em Gleissolos (10% da área) limita uso agrícola e aumenta risco de enchentes.',
+          'Irrigação não é necessária ao ar livre (superávit em todos os meses) — investimento apenas em estufas.',
+        ].map((text, i) => (
+          <div class="flex gap-3 items-start">
+            <span class="text-floresta-600 mt-1 flex-shrink-0">›</span>
+            <p class="font-body text-sm text-pergaminho-200/70 leading-relaxed">{text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- FONTES -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-xl font-bold text-pergaminho-100 mb-6">Fontes consultadas</h2>
+    <div data-animate class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {[
+        'IBGE · Censo 2022', 'IAT-PR · ZEE Paraná', 'INMET · A807 Curitiba',
+        'MapBiomas · 2023', 'EMBRAPA Solos', 'IDR-PR (ex-EMATER)',
+        'CAR/SICAR · 2026', 'Lei 12.651/2012', 'Lei 11.428/2006',
+        'CONAMA 357/2005', 'PL 2159/2021', 'SEAB-PR',
+      ].map((fonte) => (
+        <div class="font-mono text-xs text-floresta-600 px-3 py-2 border border-floresta-800/40 rounded-sm">
+          {fonte}
+        </div>
+      ))}
+    </div>
+    <p data-animate class="font-body text-xs text-pergaminho-200/30 mt-4 italic">
+      48 fontes primárias verificadas · Fact-check: 2026-03-30
+    </p>
+  </section>
+
+</Base>

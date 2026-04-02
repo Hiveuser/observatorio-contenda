@@ -1,0 +1,278 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Planejamento Estratégico"
+  description="Plano estratégico 4 anos para Contenda/PR — metas CAR/RL, Leite Premium, SAF e captação de recursos."
+>
+
+  <section class="pt-20 pb-16 px-6 max-w-7xl mx-auto">
+    <div class="mb-12">
+      <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-3">Planejamento · Estratégico</p>
+      <h1 class="font-display font-black text-5xl md:text-6xl text-pergaminho-100 leading-tight mb-4">
+        Plano<br/>
+        <span class="italic font-normal text-floresta-500">Estratégico</span>
+      </h1>
+      <p class="font-body text-lg text-pergaminho-200/60 max-w-2xl leading-relaxed">
+        Roadmap de 4 anos para regularização ambiental e desenvolvimento agropecuário.
+        Síntese para Prefeito, Secretários, Vereadores e Engenheiro Agrônomo.
+      </p>
+    </div>
+    <div class="divider"></div>
+  </section>
+
+  <!-- METAS 4 ANOS -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Metas de 4 Anos
+    </h2>
+
+    <div data-animate class="overflow-x-auto">
+      <table class="data-table w-full">
+        <thead>
+          <tr>
+            <th class="text-left">Indicador</th>
+            <th class="text-center">Atual</th>
+            <th class="text-center">Ano 1</th>
+            <th class="text-center">Ano 2</th>
+            <th class="text-center">Ano 3</th>
+            <th class="text-center">Ano 4</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[
+            { ind: 'CAR regularizado', atual: '42%', a1: '80%', a2: '100%', a3: '100%', a4: '100%' },
+            { ind: 'Reserva Legal adequada', atual: '30%', a1: '50%', a2: '70%', a3: '85%', a4: '100%' },
+            { ind: 'Leite Premium (produtores)', atual: '0', a1: '20', a2: '35', a3: '50', a4: '60' },
+            { ind: 'SAF implantado (ha)', atual: '50', a1: '100', a2: '250', a3: '400', a4: '500' },
+            { ind: 'Recursos captados', atual: 'R$ 0', a1: 'R$ 200k', a2: 'R$ 350k', a3: 'R$ 450k', a4: 'R$ 500k' },
+            { ind: 'Assistência técnica (props.)', atual: '20%', a1: '50%', a2: '70%', a3: '85%', a4: '90%' },
+          ].map((row) => (
+            <tr>
+              <td class="font-body text-sm">{row.ind}</td>
+              <td class="text-center font-mono text-xs text-dado-vermelho/80">{row.atual}</td>
+              <td class="text-center font-mono text-xs text-dado-amarelo/80">{row.a1}</td>
+              <td class="text-center font-mono text-xs text-pergaminho-200/60">{row.a2}</td>
+              <td class="text-center font-mono text-xs text-pergaminho-200/60">{row.a3}</td>
+              <td class="text-center font-mono text-xs text-dado-verde/80">{row.a4}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- AÇÕES PRIORITÁRIAS -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Ações Prioritárias
+    </h2>
+
+    <div class="space-y-6">
+      {[
+        {
+          prazo: '90 dias',
+          titulo: 'Campanha CAR/RL',
+          custo: 'R$ 135.000',
+          meta: '80% regularizadas',
+          badge: 'badge-critico',
+          badgeText: 'Urgente',
+          steps: [
+            'Mapeamento das propriedades sem CAR (1.044 propriedades)',
+            'Mutirão técnico com IDR-PR e UFPR Jandaia',
+            'Escritórios CAR itinerantes nas comunidades rurais',
+            'Prazo PRA: adesão obrigatória para evitar autuações',
+          ],
+        },
+        {
+          prazo: '180 dias',
+          titulo: 'Programa Leite Premium',
+          custo: 'R$ 28.000/propriedade',
+          meta: 'R$ 1,40/L (+27%)',
+          badge: 'badge-alto',
+          badgeText: 'Alta Prioridade',
+          steps: [
+            'Certificação de qualidade e rastreabilidade (IN77)',
+            'Instalação de tanques de resfriamento comunitários',
+            'Parceria com laticínios premium da RMC',
+            'Programa de inseminação artificial para melhoramento genético',
+          ],
+        },
+        {
+          prazo: '90 dias para início',
+          titulo: 'PMAU — Plano Municipal de Arborização Urbana',
+          custo: 'Redução 60% c/ COPEL',
+          meta: 'Evitar passivo R$ 50k–500k/árvore',
+          badge: 'badge-medio',
+          badgeText: 'Obrigatório por Lei',
+          steps: [
+            'Inventário das árvores de risco (laudo técnico)',
+            'Plano de manejo aprovado pelo Conselho Municipal',
+            'Parceria COPEL para podas em rede elétrica',
+            'Plantio de espécies nativas nas calçadas',
+          ],
+        },
+        {
+          prazo: '12 meses',
+          titulo: 'Sistema de Gestão Agro (PMAU Inteligente)',
+          custo: 'R$ 0 (open-source)',
+          meta: '6 MVPs de gestão digital',
+          badge: 'badge-ok',
+          badgeText: 'Em desenvolvimento',
+          steps: [
+            'Dashboard de propriedades CAR/RL em tempo real',
+            'Alertas climáticos integrados INMET (geada, excesso hídrico)',
+            'Rastreabilidade leite (da vaca ao laticínio)',
+            'Integração com IAT-PR para licenciamentos',
+          ],
+        },
+      ].map((item, i) => (
+        <div data-animate class="indicador-card rounded-sm overflow-hidden" style={`animation-delay:${i*0.1}s`}>
+          <div class="p-6 border-b border-floresta-800/30">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-1">
+                  <span class={`${item.badge} font-mono text-[10px] px-2 py-0.5 rounded-sm`}>{item.badgeText}</span>
+                  <span class="font-mono text-xs text-floresta-500">{item.prazo}</span>
+                </div>
+                <h3 class="font-display text-xl font-bold text-pergaminho-100">{item.titulo}</h3>
+              </div>
+              <div class="sm:text-right">
+                <p class="font-mono text-xs text-floresta-500 mb-0.5">investimento</p>
+                <p class="font-data text-sm font-medium text-pergaminho-100">{item.custo}</p>
+                <p class="font-mono text-xs text-dado-verde mt-0.5">meta: {item.meta}</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-6">
+            <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-3">Passos</p>
+            <ol class="space-y-2">
+              {item.steps.map((step, j) => (
+                <li class="flex gap-3 items-start">
+                  <span class="font-mono text-xs text-floresta-700 flex-shrink-0 mt-0.5">0{j+1}</span>
+                  <span class="font-body text-sm text-pergaminho-200/70 leading-relaxed">{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- FONTES DE RECURSOS -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Fontes de Recursos
+    </h2>
+
+    <div data-animate class="overflow-x-auto">
+      <table class="data-table w-full">
+        <thead>
+          <tr>
+            <th class="text-left">Fonte</th>
+            <th class="text-left">Tipo</th>
+            <th class="text-right">Potencial</th>
+            <th class="text-left">Observação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[
+            { fonte: 'FNMA — Fundo Nacional Meio Ambiente', tipo: 'Projeto', pot: 'R$ 200k–500k', obs: 'Edital aberto' },
+            { fonte: 'ICMS Ecológico (PR)', tipo: 'Transferência', pot: 'R$ 50–150k/ano', obs: 'Recorrente' },
+            { fonte: 'Fundo Verde IAP (Arborização)', tipo: 'PMAU', pot: 'R$ 150–300k', obs: 'Vinculado ao PMAU' },
+            { fonte: 'COPEL (PMAU parceria)', tipo: 'Parceria', pot: '60% redução custos', obs: 'Poda rede elétrica' },
+            { fonte: 'PAC Seleções', tipo: 'Federal', pot: 'Variável', obs: 'Por demanda' },
+            { fonte: 'Crédito de Carbono REDD+', tipo: 'Mercado', pot: 'R$ 20–50/ha/ano', obs: 'Via Reserva Legal' },
+          ].map((row) => (
+            <tr>
+              <td class="font-body text-sm">{row.fonte}</td>
+              <td class="font-mono text-xs text-floresta-400">{row.tipo}</td>
+              <td class="text-right font-mono text-sm text-dado-verde">{row.pot}</td>
+              <td class="font-data text-xs text-pergaminho-200/50">{row.obs}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- RISCOS -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Riscos e Mitigação
+    </h2>
+
+    <div data-animate class="overflow-x-auto">
+      <table class="data-table w-full">
+        <thead>
+          <tr>
+            <th class="text-left">Risco</th>
+            <th class="text-center">Probabilidade</th>
+            <th class="text-center">Impacto</th>
+            <th class="text-left">Mitigação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[
+            { risco: 'Multas CAR/RL antes da campanha', prob: 'Alta', imp: 'Alto', mit: 'Acelerar PRA imediatamente', pb: 'badge-critico', ib: 'badge-critico' },
+            { risco: 'Preço leite < R$ 1,00/L', prob: 'Média', imp: 'Alto', mit: 'Diversificação + Leite Premium', pb: 'badge-alto', ib: 'badge-critico' },
+            { risco: 'Geada extrema (mai–ago)', prob: 'Alta', imp: 'Médio', mit: 'SAF com espécies tolerantes', pb: 'badge-critico', ib: 'badge-alto' },
+            { risco: 'Descontinuidade política (2028)', prob: 'Alta', imp: 'Alto', mit: 'Institucionalizar programas via lei', pb: 'badge-critico', ib: 'badge-critico' },
+            { risco: 'Fiscalização IAT surpresa', prob: 'Média', imp: 'Alto', mit: 'Regularização preventiva prioritária', pb: 'badge-alto', ib: 'badge-critico' },
+          ].map((row) => (
+            <tr>
+              <td class="font-body text-sm">{row.risco}</td>
+              <td class="text-center">
+                <span class={`${row.pb} font-mono text-[9px] px-1.5 py-0.5 rounded-sm`}>{row.prob}</span>
+              </td>
+              <td class="text-center">
+                <span class={`${row.ib} font-mono text-[9px] px-1.5 py-0.5 rounded-sm`}>{row.imp}</span>
+              </td>
+              <td class="font-body text-xs text-pergaminho-200/60">{row.mit}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- STAKEHOLDERS -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Stakeholders Mapeados <span class="text-floresta-600 font-normal text-lg">(15)</span>
+    </h2>
+
+    <div data-animate class="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
+      {[
+        { cat: 'Municipais', atores: ['Prefeito', 'Sec. Agricultura', 'Eng. Agrônomo', 'Câmara Municipal'] },
+        { cat: 'Técnicos', atores: ['IDR-PR (ex-EMATER)', 'IAT-PR', 'UFPR', 'UTFPR'] },
+        { cat: 'Mercado', atores: ['Cooperativas (Cope, Cotripar)', 'Indústria laticinista'] },
+        { cat: 'Financeiros', atores: ['FNMA', 'ICMS Ecológico', 'SEAB-PR'] },
+        { cat: 'Fiscalização', atores: ['MP-PR', 'IBAMA', 'IAT-PR'] },
+      ].map((group, i) => (
+        <div data-animate class="indicador-card rounded-sm p-5" style={`animation-delay:${i*0.08}s`}>
+          <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-3">{group.cat}</p>
+          <ul class="space-y-1.5">
+            {group.atores.map((ator) => (
+              <li class="font-body text-sm text-pergaminho-200/70">{ator}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+</Base>

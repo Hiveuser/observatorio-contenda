@@ -1,0 +1,306 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Sobre"
+  description="Sobre o Observatório Contenda/PR — plataforma de dados agrícolas e ambientais, stack técnico, audiência e licença MIT."
+>
+
+  <!-- PAGE HERO -->
+  <section class="pt-20 pb-16 px-6 max-w-7xl mx-auto">
+    <div class="mb-12">
+      <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-3">Sobre</p>
+      <h1 class="font-display font-black text-5xl md:text-6xl text-pergaminho-100 leading-tight mb-4">
+        Observatório<br/>
+        <span class="italic font-normal text-floresta-500">Contenda/PR</span>
+      </h1>
+      <p class="font-body text-lg text-pergaminho-200/60 max-w-2xl leading-relaxed">
+        Plataforma de dados abertos para gestão agrícola e ambiental do município.
+        Diagnóstico territorial fundado em 48 fontes primárias verificadas.
+      </p>
+    </div>
+    <div class="divider"></div>
+  </section>
+
+  <!-- MISSÃO -->
+  <section class="py-20 px-6 max-w-7xl mx-auto">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <div data-animate>
+        <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-4">Missão</p>
+        <h2 class="font-display text-3xl font-bold text-pergaminho-100 mb-6">
+          Dados abertos para decisões melhores
+        </h2>
+        <p class="font-body text-lg text-pergaminho-200/70 leading-relaxed mb-6">
+          O Observatório Contenda/PR consolida dados agrícolas, ambientais e territoriais
+          do município em uma plataforma de fácil acesso. Nossa missão é democratizar informações
+          críticas para formulação de política pública, planejamento agrícola e pesquisa.
+        </p>
+        <ul class="space-y-3">
+          {[
+            'Transparência: dados abertos, verificáveis, com fontes citadas',
+            'Precisão: fact-check contínuo, 48 fontes primárias',
+            'Acessibilidade: não é necessário conhecimento técnico',
+            'Interatividade: mapas, tabelas, indicadores em tempo real',
+          ].map((item) => (
+            <li class="flex gap-3 items-start">
+              <span class="text-floresta-500 mt-1 font-bold">›</span>
+              <span class="font-body text-sm text-pergaminho-200/70">{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div data-animate class="indicador-card rounded-sm p-8">
+        <div class="space-y-6">
+          <div>
+            <p class="font-mono text-xs uppercase tracking-wider text-floresta-500 mb-2">Público-alvo</p>
+            <ul class="space-y-2">
+              {[
+                'Engenheiros Agrônomos e extensionistas rural',
+                'Gestores Municipais (Prefeito, Secretários, Vereadores)',
+                'Produtores Rurais e associações de classe',
+                'Pesquisadores e instituições acadêmicas',
+              ].map((aud) => (
+                <li class="font-body text-sm text-pergaminho-200/70">→ {aud}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="border-t border-floresta-700/40 pt-6">
+            <p class="font-mono text-xs uppercase tracking-wider text-floresta-500 mb-2">Atualização</p>
+            <p class="font-body text-sm text-pergaminho-200/70">
+              Fact-check: <strong>2026-03-30</strong>
+              <br/>
+              Próxima revisão: 2026-06-30
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- DADOS -->
+  <section class="py-20 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-3xl font-bold text-pergaminho-100 mb-12 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Dados e fontes
+    </h2>
+
+    <div class="grid md:grid-cols-2 gap-10">
+      <div data-animate>
+        <p class="font-data text-xs uppercase tracking-wider text-floresta-500 mb-6">
+          48 fontes primárias · Verificadas e citadas
+        </p>
+
+        <div class="space-y-4">
+          {[
+            { cat: 'Sociodemografia', itens: ['IBGE Censo 2022', 'SEADE-PR', 'Registros cartoriais'] },
+            { cat: 'Clima e recursos hídricos', itens: ['INMET A807 Curitiba (30 anos)', 'ANA (Agência Nacional de Águas)', 'SANEPAR (qualidade água)'] },
+            { cat: 'Solos e aptidão agrícola', itens: ['EMBRAPA Solos', 'IAT-PR ZEE Paraná', 'IDR-PR (ex-EMATER)'] },
+            { cat: 'Floresta e uso do solo', itens: ['MapBiomas 2023', 'INPE (PRODES)', 'CAR/SICAR 2026'] },
+            { cat: 'Legislação', itens: ['Lei 12.651/2012 (Código Florestal)', 'Lei 11.428/2006 (Lei Mata Atlântica)', 'CONAMA 357/2005'] },
+            { cat: 'Economia agrícola', itens: ['SEAB-PR (Secretaria Agricultura)', 'IBGE Contas Regionais', 'Sindicatos de produtores'] },
+          ].map((grupo) => (
+            <div>
+              <p class="font-data text-xs uppercase text-floresta-500 mb-2">{grupo.cat}</p>
+              <ul class="space-y-1">
+                {grupo.itens.map((item) => (
+                  <li class="font-body text-sm text-pergaminho-200/70">• {item}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div data-animate class="indicador-card rounded-sm p-8">
+        <p class="font-data text-xs uppercase tracking-wider text-floresta-500 mb-4">Correções críticas aplicadas</p>
+        <div class="space-y-4">
+          {[
+            { erro: 'Área do município', correcao: '313,93 km² (não 475 km²)', fonte: 'IBGE' },
+            { erro: 'RL obrigatória', correcao: '20% (não 80%) — Mata Atlântica', fonte: 'Lei 12.651/2012' },
+            { erro: 'Aquífero local', correcao: 'Fraturado Cristalino (não Guarani)', fonte: 'IAT-PR ZEE' },
+            { erro: 'Clima', correcao: 'Cfb Köppen (não Cfa) — subtropical de altitude', fonte: 'INMET' },
+          ].map((item) => (
+            <div class="border-l-2 border-terracota-500 pl-4">
+              <p class="font-body text-xs font-semibold text-pergaminho-100 mb-1">❌ {item.erro}</p>
+              <p class="font-body text-sm text-pergaminho-200/70 mb-1">✓ {item.correcao}</p>
+              <p class="font-mono text-xs text-floresta-600">{item.fonte}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- MUNICÍPIO -->
+  <section class="py-20 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-3xl font-bold text-pergaminho-100 mb-12 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Contenda em números
+    </h2>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[
+        { label: 'População', valor: '17.197', unidade: 'habitantes', fonte: 'IBGE 2022' },
+        { label: 'Área', valor: '313,93', unidade: 'km²', fonte: 'IBGE' },
+        { label: 'Densidade', valor: '54,8', unidade: 'hab/km²', fonte: 'Calculado' },
+        { label: 'PIB Agropecuário', valor: 'R$ 380', unidade: 'milhões/ano', fonte: 'SEAB-PR' },
+        { label: 'Cobertura florestal', valor: '38%', unidade: 'Mata Atlântica', fonte: 'MapBiomas' },
+        { label: 'Bioma', valor: 'Mata', unidade: 'Atlântica 100%', fonte: 'Lei 11.428/2006' },
+        { label: 'Clima', valor: 'Cfb', unidade: 'Köppen', fonte: 'INMET' },
+        { label: 'Altitude média', valor: '910', unidade: 'metros', fonte: 'GPS Contenda' },
+        { label: 'Região', valor: 'RMC', unidade: 'Região Metropolitana Curitiba', fonte: 'IBGE' },
+      ].map((item, i) => (
+        <div data-animate class="indicador-card rounded-sm p-6" style={`animation-delay:${i*0.07}s`}>
+          <p class="font-data text-xs uppercase tracking-wider text-floresta-500 mb-2">{item.label}</p>
+          <p class="font-display text-3xl font-bold text-pergaminho-100 mb-1">{item.valor}</p>
+          <p class="font-body text-xs text-pergaminho-200/60 mb-2">{item.unidade}</p>
+          <p class="font-mono text-[9px] text-floresta-600">{item.fonte}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- STACK TÉCNICO -->
+  <section class="py-20 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-3xl font-bold text-pergaminho-100 mb-12 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Stack técnico
+    </h2>
+
+    <div class="grid md:grid-cols-2 gap-10">
+      <div data-animate>
+        <p class="font-data text-xs uppercase tracking-wider text-floresta-500 mb-6">Frontend</p>
+        <div class="space-y-3">
+          {[
+            { tech: 'Astro 4', desc: 'Framework web estático + SSR, otimizado para performance' },
+            { tech: 'TypeScript', desc: 'Tipagem estática, segurança de código' },
+            { tech: 'Tailwind CSS', desc: 'Utility-first CSS, design responsivo' },
+            { tech: 'Leaflet.js', desc: 'Mapas interativos (OpenStreetMap)' },
+          ].map((item) => (
+            <div class="flex gap-3">
+              <span class="font-mono text-xs uppercase text-floresta-500 flex-shrink-0 w-16">{item.tech}</span>
+              <span class="font-body text-sm text-pergaminho-200/70">{item.desc}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div data-animate>
+        <p class="font-data text-xs uppercase tracking-wider text-floresta-500 mb-6">Infraestrutura</p>
+        <div class="space-y-3">
+          {[
+            { tech: 'Vercel', desc: 'Hosting edge + CDN global, zero cold starts' },
+            { tech: 'Git', desc: 'Versionamento, CI/CD via Vercel' },
+            { tech: 'Open Graph', desc: 'SEO, compartilhamento em redes sociais' },
+          ].map((item) => (
+            <div class="flex gap-3">
+              <span class="font-mono text-xs uppercase text-floresta-500 flex-shrink-0 w-16">{item.tech}</span>
+              <span class="font-body text-sm text-pergaminho-200/70">{item.desc}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div data-animate class="mt-10 indicador-card rounded-sm p-6">
+      <p class="font-data text-xs uppercase tracking-wider text-floresta-500 mb-3">Performance</p>
+      <ul class="space-y-2 font-body text-sm text-pergaminho-200/70">
+        <li>• <strong>LCP &lt; 1.2s</strong> (Largest Contentful Paint)</li>
+        <li>• <strong>CLS &lt; 0.05</strong> (Cumulative Layout Shift)</li>
+        <li>• <strong>FID &lt; 100ms</strong> (First Input Delay)</li>
+        <li>• <strong>PageSpeed Insights: 95+</strong></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- LICENÇA -->
+  <section class="py-20 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-3xl font-bold text-pergaminho-100 mb-12 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Licença e reutilização
+    </h2>
+
+    <div class="grid md:grid-cols-2 gap-10">
+      <div data-animate class="indicador-card rounded-sm p-8">
+        <p class="font-data text-xs uppercase tracking-wider text-floresta-500 mb-4">Licença</p>
+        <p class="font-display text-2xl font-bold text-pergaminho-100 mb-4">MIT</p>
+        <p class="font-body text-sm text-pergaminho-200/70 leading-relaxed mb-4">
+          Todos os dados e código-fonte do Observatório Contenda/PR são publicados sob licença MIT.
+          Você é livre para copiar, modificar, distribuir e usar comercialmente,
+          desde que inclua aviso de copyright e licença.
+        </p>
+        <a href="https://opensource.org/license/MIT" target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 text-terracota-400 hover:text-terracota-300 font-body text-sm">
+          Leia a licença completa
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+      <div data-animate class="indicador-card rounded-sm p-8">
+        <p class="font-data text-xs uppercase tracking-wider text-floresta-500 mb-4">Atribuição recomendada</p>
+        <p class="font-mono text-xs bg-floresta-900/40 p-3 rounded border border-floresta-700/40 text-pergaminho-200/70 mb-4 leading-relaxed">
+          Observatório Contenda/PR · Dados abertos · 2026<br/>
+          https://observatorio-contenda.vercel.app
+        </p>
+        <p class="font-body text-xs text-pergaminho-200/60">
+          Ao reutilizar dados ou visualizações, favor citar a fonte e linkar para este site.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- CRÉDITOS -->
+  <section class="py-20 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-3xl font-bold text-pergaminho-100 mb-12 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Créditos
+    </h2>
+
+    <div class="space-y-8">
+      <div data-animate>
+        <p class="font-data text-xs uppercase tracking-wider text-floresta-500 mb-4">Instituições parceiras</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          {[
+            'IBGE — Instituto Brasileiro de Geografia e Estatística',
+            'IAT-PR — Instituto Água e Terra do Paraná',
+            'INMET — Instituto Nacional de Meteorologia',
+            'MapBiomas — Plataforma de monitoramento de cobertura vegetal',
+            'EMBRAPA — Empresa Brasileira de Pesquisa Agropecuária',
+            'IDR-PR — Instituto de Desenvolvimento Rural do Paraná',
+            'SEAB-PR — Secretaria de Estado da Agricultura e Abastecimento',
+            'Prefeitura Municipal de Contenda',
+          ].map((org) => (
+            <div class="flex gap-2 items-start">
+              <span class="text-floresta-600 mt-1">◆</span>
+              <span class="font-body text-sm text-pergaminho-200/70">{org}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div data-animate class="border-t border-floresta-700/40 pt-8">
+        <p class="font-data text-xs uppercase tracking-wider text-floresta-500 mb-4">Desenvolvedor</p>
+        <p class="font-body text-sm text-pergaminho-200/70">
+          Observatório Contenda/PR é desenvolvido como projeto de código aberto.
+          Contribuições, correções e sugestões são bem-vindas.
+        </p>
+      </div>
+    </div>
+  </section>
+
+</Base>
