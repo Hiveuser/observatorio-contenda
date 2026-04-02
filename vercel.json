@@ -1,1 +1,0 @@
-{"buildCommand": "cp -r vault site/_vault && cd site && npm run build", "outputDirectory": "site/dist", "installCommand": "cd site && npm install", "framework": "astro"}
