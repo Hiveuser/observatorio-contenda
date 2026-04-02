@@ -1,1 +1,6 @@
-{"buildCommand":"cd site && ./node_modules/.bin/tsx prebuild.mjs && astro build","installCommand":"cd site && npm install","root":"site","outputDirectory":"site/dist"}
+{
+  "buildCommand": "cd site && ./node_modules/.bin/tsx prebuild.mjs && astro build",
+  "outputDirectory": "dist",
+  "installCommand": "cd site && npm install",
+  "framework": "astro"
+}
