@@ -1,0 +1,1 @@
+{"buildCommand": "cp -r ../vault ./_vault && node prebuild.mjs && astro build && npx pagefind --site dist", "outputDirectory": "dist", "framework": "astro"}
