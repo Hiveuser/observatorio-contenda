@@ -33,3 +33,8 @@ Thumbs.db
 # Caddy volumes
 caddy_data/
 caddy_config/
+site/_vault/
+
+# Prebuild output
+site/src/data/
+files_base64.json
