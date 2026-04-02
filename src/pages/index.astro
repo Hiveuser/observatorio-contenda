@@ -351,7 +351,7 @@ import Base from '../layouts/Base.astro';
     import L from 'leaflet';
 
     const map = L.map('mapa-hero', {
-      center: [-25.60, -49.24],
+      center: [-25.6787, -49.5369],
       zoom: 12,
       zoomControl: false,
       attributionControl: false,
@@ -379,14 +379,14 @@ import Base from '../layouts/Base.astro';
       iconAnchor: [6, 6],
     });
 
-    L.marker([-25.60, -49.24], { icon }).addTo(map)
-      .bindPopup('<strong>Contenda/PR</strong><br/>25°36\'S 49°14\'W')
+    L.marker([-25.6787, -49.5369], { icon }).addTo(map)
+      .bindPopup('<strong>Contenda/PR</strong><br/>25°40\'S 49°32\'W')
       .openPopup();
 
     // Rough Contenda boundary approximation
     const bounds = L.latLngBounds(
-      [-25.46, -49.36],
-      [-25.72, -49.12]
+      [-25.75, -49.63],
+      [-25.60, -49.44]
     );
     L.rectangle(bounds, {
       color: '#4a7a4a',
