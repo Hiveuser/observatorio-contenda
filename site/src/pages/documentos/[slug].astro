@@ -1,0 +1,214 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllNotes } from '../../utils/markdown';
+import { formatCoords } from '../../utils/spatial';
+
+export function getStaticPaths() {
+  const notes = getAllNotes();
+  console.log(`[documentos/[slug]] getStaticPaths: found ${notes.length} notes`);
+  notes.forEach(n => console.log(`  -> ${n.slug}`));
+  return notes.map(note => ({
+    params: { slug: note.slug },
+    props: { note },
+  }));
+}
+
+const { note } = Astro.props;
+const fm = note.frontmatter;
+const hasGeo = fm.spatial_status === 'georreferenciado' && typeof fm.lat === 'number' && typeof fm.lon === 'number';
+---
+
+<BaseLayout
+  title={fm.titulo}
+  description={fm.resumo || `Documento: ${fm.titulo} - Observatorio Contenda`}
+>
+  <article class="doc-page">
+    <div class="container">
+      <a href="/" class="back-link">&larr; Inicio</a>
+
+      <header class="doc-header">
+        <div class="doc-meta-row">
+          <span class="badge">{fm.tipo}</span>
+          <span class="status-badge" data-status={fm.status}>{fm.status?.replace('_', ' ')}</span>
+          {fm.spatial_status && (
+            <span class="spatial-badge" data-spatial={fm.spatial_status}>
+              {fm.spatial_status.replace('_', ' ')}
+            </span>
+          )}
+        </div>
+        <h1>{fm.titulo}</h1>
+        {fm.resumo && <p class="doc-resumo">{fm.resumo}</p>}
+      </header>
+
+      <div class="doc-grid">
+        <div class="doc-content" set:html={note.html} />
+
+        <aside class="doc-sidebar">
+          <div class="card sidebar-card">
+            <h3>Metadados</h3>
+            <dl class="meta-list">
+              <dt>Criado em</dt>
+              <dd>{fm.criado_em}</dd>
+              <dt>Atualizado em</dt>
+              <dd>{fm.atualizado_em}</dd>
+              {fm.canonical_name && (
+                <><dt>Nome canonico</dt><dd>{fm.canonical_name}</dd></>
+              )}
+              {fm.entity_type && (
+                <><dt>Tipo de entidade</dt><dd>{fm.entity_type}</dd></>
+              )}
+            </dl>
+          </div>
+
+          {hasGeo && (
+            <div class="card sidebar-card">
+              <h3>Localizacao</h3>
+              <dl class="meta-list">
+                <dt>Coordenadas</dt>
+                <dd>{formatCoords(fm.lat!, fm.lon!)}</dd>
+                <dt>CRS</dt>
+                <dd>{fm.crs || 'EPSG:4326'}</dd>
+                {fm.geocode_confidence && (
+                  <><dt>Confianca</dt><dd>{(fm.geocode_confidence * 100).toFixed(0)}%</dd></>
+                )}
+                {fm.geocode_source && (
+                  <><dt>Fonte</dt><dd>{fm.geocode_source}</dd></>
+                )}
+              </dl>
+              <a href="/mapa" class="btn btn-primary btn-sm" style="margin-top:var(--space-sm);width:100%;justify-content:center;">
+                Ver no mapa
+              </a>
+            </div>
+          )}
+
+          {Array.isArray(fm.tags) && fm.tags.length > 0 && (
+            <div class="card sidebar-card">
+              <h3>Tags</h3>
+              <div class="tag-list">
+                {fm.tags.map((tag: string) => (
+                  <a href={`/temas/${tag}`} class="tag">{tag}</a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {Array.isArray(fm.aliases) && fm.aliases.length > 0 && (
+            <div class="card sidebar-card">
+              <h3>Aliases</h3>
+              <ul class="alias-list">
+                {fm.aliases.map((a: string) => <li>{a}</li>)}
+              </ul>
+            </div>
+          )}
+        </aside>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .doc-page { padding: var(--space-2xl) 0; }
+  .back-link {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    display: inline-block;
+    margin-bottom: var(--space-md);
+  }
+  .back-link:hover { color: var(--color-primary); }
+  .doc-header { margin-bottom: var(--space-xl); }
+  .doc-meta-row {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+    margin-bottom: var(--space-sm);
+  }
+  .status-badge, .spatial-badge {
+    font-size: 0.75rem;
+    padding: 0.15em 0.6em;
+    border-radius: 9999px;
+    text-transform: capitalize;
+  }
+  .status-badge {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+  .status-badge[data-status="publicado"] { background: #dcfce7; color: #166534; }
+  .status-badge[data-status="rascunho"] { background: #f5f5f4; color: #57534e; }
+  .spatial-badge {
+    background: #f0fdf4;
+    color: var(--color-primary);
+  }
+  .spatial-badge[data-spatial="pendente"] { background: #fef3c7; color: #92400e; }
+  .doc-resumo {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+  .doc-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+  .doc-content {
+    line-height: 1.7;
+  }
+  .doc-content :global(h2) { margin-top: var(--space-xl); }
+  .doc-content :global(ul), .doc-content :global(ol) {
+    padding-left: var(--space-lg);
+    margin-bottom: var(--space-md);
+  }
+  .sidebar-card {
+    margin-bottom: var(--space-md);
+  }
+  .sidebar-card h3 {
+    font-size: 0.9rem;
+    margin-bottom: var(--space-sm);
+  }
+  .meta-list {
+    font-size: 0.85rem;
+  }
+  .meta-list dt {
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-top: var(--space-sm);
+  }
+  .meta-list dd {
+    margin-left: 0;
+    font-weight: 500;
+  }
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+  .tag {
+    font-size: 0.75rem;
+    padding: 0.15em 0.5em;
+    background: #f0fdf4;
+    color: var(--color-primary);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-accent-light);
+  }
+  .tag:hover { background: var(--color-accent-light); }
+  .alias-list {
+    list-style: none;
+    padding: 0;
+    font-size: 0.85rem;
+  }
+  .alias-list li {
+    padding: var(--space-xs) 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .btn-sm {
+    padding: var(--space-xs) var(--space-md);
+    font-size: 0.8rem;
+  }
+  @media (max-width: 768px) {
+    .doc-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
