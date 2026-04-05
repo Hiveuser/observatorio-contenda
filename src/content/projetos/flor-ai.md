@@ -13,19 +13,13 @@ public: true
 
 **Arranjos florais digitais com plantas nativas brasileiras — bonito, educativo e 100% brasileiro.**
 
-| Campo        | Valor                           |
-| ------------ | ------------------------------- |
-| Status       | 🟡 Planejamento                 |
-| Domínio Alvo | florai.app                      |
-| MVP Previsto | 6-8 semanas                     |
-| Data         | 2026-04-05                      |
-| Por          | Danilo + Maria (Secretária)     |
+**Status:** 🟡 Planejamento | **Domínio Alvo:** florai.app | **Por:** Danilo + Maria
 
 ---
 
 ## 📋 Resumo Executivo
 
-FLOR.AI é uma plataforma web onde usuários podem:
+**FLOR.AI** é uma plataforma web onde usuários podem:
 
 1. Explorar plantas nativas brasileiras organizadas por bioma
 2. Criar arranjos florais digitais com drag-and-drop
@@ -38,7 +32,9 @@ FLOR.AI é uma plataforma web onde usuários podem:
 
 ## 🎯 Visão e Proposta de Valor
 
-**Conceito Central:** "Crie arranjos lindos com plantas nativas, aprenda sobre nossos biomas e descubra como levar essa beleza pro seu espaço real."
+> "Crie arranjos lindos com plantas nativas, aprenda sobre nossos biomas e descubra como levar essa beleza pro seu espaço real."
+
+**Funil:** App gratuito → Conteúdo educativo → Lead qualificado → Projeto paisagístico (Danilo)
 
 | Flority (Inspiração)    | FLOR.AI (Nós)                            |
 | ----------------------- | ---------------------------------------- |
@@ -48,122 +44,159 @@ FLOR.AI é uma plataforma web onde usuários podem:
 | Global (sem identidade) | 100% Brasil, identidade bioma            |
 | Entretenimento puro     | Entretenimento + aprendizado + propósito |
 
-**Funil:** App gratuito → Conteúdo educativo → Lead qualificado → Projeto paisagístico
+---
+
+## 📊 Reverse Engineer: Flority.digital
+
+> Análise direta em 2026-04-05
+
+**Stack confirmada:** Vanilla JS + HTML5 Canvas API + Cloudinary CDN + GA4. Sem React/Vue/Angular.
+
+**Modelo de negócio:** 100% gratuito, sem paywall, sem anúncios. Watermark `"made with flority.digital"` em cada export. Monetização real: nenhuma.
+
+**Core Loop:**
+1. Canvas vazio → arrasta flor (0.38s animação) → toast "added ✓"
+2. Ajusta: tamanho 40–220px, rotação, opacidade, flip, z-index
+3. Export PNG → WhatsApp/clipboard → Wall of Flowers
+
+### Gaps que o FLOR.AI explora
+
+| Gap Flority                 | FLOR.AI resolve assim                   |
+| --------------------------- | --------------------------------------- |
+| Sem identidade              | 100% Brasil — nativas por bioma         |
+| Sem educação                | Ficha técnica por espécie               |
+| Sem monetização             | Freemium + Premium R$ 19,90 + Pro R$ 99 |
+| Sem funil de negócios       | Leads diretos para paisagismo           |
+| Paleta fixa 50 flores       | Banco curado de nativas (escalável)     |
 
 ---
 
-## 📊 Análise Competitiva — Reverse Engineer: Flority.digital
+## 🌿 Nativas por Biomas
 
-> Análise direta do produto em 2026-04-05
+**Mata Atlântica** ⭐ foco inicial — Manacá-da-serra (*Tibouchina mutabilis*), Quaresmeira (*Tibouchina granulosa*), Jerivá (*Syagrus romanzoffiana*), Bromélia-imperial, Orquídea-bambu, Helicônia, Alpínia
 
-### Stack Técnica do Flority (confirmada)
+**Cerrado** — Sempre-viva, Pé-de-moça, Barbatimão, Buriti, Pequi, Arnica
 
-* Vanilla JavaScript ES6+ (sem React/Vue/Angular)
-* HTML5 Canvas API (`renderArrangement`, `canvas.toBlob`)
-* Drag & Drop API nativa
-* Cloudinary CDN (upload + galeria pública)
-* URL-based State (Base64 JSON no hash → sharelinks)
-* Google Analytics 4
+**Amazônia** — Orquídeas (Cattleya, Laelia), Bromélias (Aechmea, Vriesea), Açaí ornamental
 
-### Core Loop do Flority
+**Caatinga** — Mandacaru, Xique-xique, Coroa-de-frade, Pau-ferro florido, Alecrim-da-caatinga
 
-1. Abre app → Canvas vazio com hint
-2. Arrasta flor → animação spring 0.38s + toast
-3. Ajusta tamanho/rotação/posição
-4. Resultado bonito → compartilha WhatsApp/clipboard
-5. Wall of Flowers → social proof → volta a criar
+**Pampa** — Verbena, Margarida, Araçá, Guabiroba, Iris, Taboa
 
-### Modelo de Negócio do Flority
+**Pantanal** — Vitória-régia, Aguapé, Acuri, Bocaiúva, Ipê-amarelo, Taboa
 
-* **100% gratuito** — sem paywall, sem anúncios
-* Watermark `"made with flority.digital"` em cada export
-* Monetização: **nenhuma detectável** (sustentabilidade questionável)
+### Vasos Diversificados
 
-### Gaps que o FLOR.AI Resolve
-
-| Gap Flority              | FLOR.AI resolve assim                        |
-| ------------------------ | -------------------------------------------- |
-| Sem identidade           | 100% Brasil — nativas por bioma              |
-| Sem educação             | Ficha técnica por espécie                    |
-| Sem monetização          | Freemium + Premium R$ 19,90 + Pro R$ 99      |
-| Sem funil de negócios    | Leads diretos para paisagismo (Danilo)       |
-| Paleta genérica          | Banco curado de espécies nativas             |
-| Sem propósito            | Educação botânica = retenção + missão        |
+| Categoria     | Exemplos                               |
+| ------------- | -------------------------------------- |
+| Cerâmica      | Vaso português, barro queimado         |
+| Concreto      | Minimalista, industrial                |
+| Fibra natural | Palha, bambu, sisal                    |
+| Suspensos     | Macramê, cachepot de parede            |
+| Reciclados    | Lata, vidro, pneu (upcycling)          |
+| Premium       | Cobre, pedra-sabão, madeira nobre      |
 
 ---
 
-## 🌿 Estrutura por Biomas
+## 🌐 Domínio
 
-**Mata Atlântica** ⭐ foco inicial: Manacá-da-serra, Quaresmeira, Jerivá, Juçara, Cipó-uva, Bromélias
-
-**Cerrado:** Sempre-viva, Pé-de-moça, Barbatimão, Buriti, Pequi
-
-**Amazônia:** Orquídeas nativas, Bromélias (Aechmea, Vriesea), Açaí ornamental
-
-**Caatinga:** Mandacaru, Xique-xique, Coroa-de-frade, Umbu, Imburana
-
-**Pantanal:** Vitória-régia, Aguapé, Laelia lundii
-
-**Pampa:** Gramíneas ornamentais, Senecio, Aroeira, Cina-cina
+| Domínio         | Status           | Preço      |
+| --------------- | ---------------- | ---------- |
+| `flor.ai`       | ⚠️ Caro/indisponível | $50-200/ano |
+| `florai.com.br` | ❌ Indisponível   | —          |
+| `florai.app`    | ✅ **Recomendado** | ~$20/ano  |
 
 ---
 
 ## 🛠️ Stack Técnica
 
-| Camada       | Tecnologia                  |
-| ------------ | --------------------------- |
-| Build        | Vite                        |
-| UI           | React + TypeScript          |
-| Canvas       | Konva.js                    |
-| Estilos      | Tailwind CSS                |
-| Backend/Auth | Supabase                    |
-| Deploy       | Vercel                      |
+| Camada       | Tecnologia                              |
+| ------------ | --------------------------------------- |
+| Build        | Vite 5                                  |
+| UI           | React 18 + TypeScript                   |
+| Canvas       | Konva.js + react-konva                  |
+| Estilos      | Tailwind CSS 3                          |
+| Backend/Auth | Supabase (PostgreSQL + Storage + Auth)  |
+| Deploy       | Vercel                                  |
+| Analytics    | Plausible (privacy-first)               |
+
+```json
+{
+  "dependencies": {
+    "react": "^18.3.1",
+    "konva": "^9.3.1",
+    "react-konva": "^18.2.10",
+    "use-image": "^1.1.1"
+  }
+}
+```
 
 ---
 
-## 📅 Roadmap MVP (6–8 semanas)
+## 📅 Roadmap MVP
 
-| Semana | Entrega                                               |
-| ------ | ----------------------------------------------------- |
-| 1      | Setup Vite + React + Tailwind + Konva.js. Canvas básico |
-| 2      | Biblioteca Mata Atlântica. Drag-and-drop              |
-| 3      | Controles: tamanho, rotação, opacidade, flip, z-index |
-| 4      | Sistema de biomas. Filtro. Card de espécie            |
-| 5      | Export PNG (watermark). Wall of Flowers. Share        |
-| 6      | Supabase: auth, save designs, galeria pessoal         |
-| 7      | Mobile responsivo. PWA. Polimento UX                  |
-| 8      | Beta fechado. Feedback. Bug fixes                     |
+| Semana | Entrega                                                 |
+| ------ | ------------------------------------------------------- |
+| 1-2    | Setup Vite + React + Tailwind. Estrutura biomas/espécies |
+| 3-4    | Drag-and-drop funcional. 5-10 vasos. Export PNG         |
+| 5-6    | Galeria/Mural público. Share link. Mobile responsivo    |
+| 7-8    | Deploy Vercel. Domínio florai.app. Divulgação Instagram |
 
 ---
 
 ## 💰 Modelo de Receita
 
-| Plano       | Preço        | Features                                     |
-| ----------- | ------------ | -------------------------------------------- |
-| Grátis      | R$ 0         | Editor, 1 bioma, export com watermark, Wall  |
-| Premium     | R$ 19,90/mês | 6 biomas, sem watermark, save ilimitado, PDF |
-| Pro         | R$ 99/mês    | API, embed, colaboração, relatórios          |
+| Plano           | Preço            | Features                                         |
+| --------------- | ---------------- | ------------------------------------------------ |
+| Grátis          | R$ 0             | 3 biomas, 50 plantas, 5 vasos, PNG c/ watermark  |
+| Premium         | R$ 19,90/mês     | 6 biomas, 200+ plantas, 30+ vasos, sem watermark |
+| Profissional    | R$ 99/mês        | PDF, white-label, lead capture                   |
 
 ---
 
-## 📊 Métricas de Sucesso — 3 Meses
+## 🎨 Design
+
+**Paleta:** `#2D6A4F` Verde floresta · `#D8F3DC` Verde claro · `#E07A5F` Terracota · `#F7F9F7` Off-white
+
+**Tipografia:** Playfair Display (títulos) + Inter/Sora (corpo)
+
+---
+
+## 🎯 Diferenciais — Oceano Azul
+
+| Característica | Flority     | FLOR.AI              |
+| -------------- | ----------- | -------------------- |
+| Espécies       | Genéricas   | Nativas brasileiras  |
+| Contexto       | Nenhum      | Educação botânica    |
+| Foco           | Buquês      | Arranjos + paisagismo|
+| Identidade     | Global      | 100% Brasil          |
+| Monetização    | Nenhuma     | Freemium claro       |
+
+---
+
+## 📊 Métricas de Sucesso (3 meses)
 
 | Métrica             | Meta    |
 | ------------------- | ------- |
-| Usuários únicos/mês | 1.000   |
-| Arranjos criados    | 5.000   |
-| Conversões Premium  | 50      |
-| Leads paisagismo    | 10      |
-| MRR                 | R$ 995  |
+| Usuários únicos/mês | 1.000+  |
+| Arranjos criados    | 5.000+  |
+| Compartilhamentos   | 500+    |
+| Conversão Premium   | 3-5%    |
+| Leads paisagismo    | 10-20   |
 
 ---
 
-## 🚀 Próximos Passos
+## 👥 Equipe
 
-* Comprar domínio `florai.app`
-* Criar repositório GitHub `florai`
-* Setup Vite + React + Konva.js + Tailwind
-* 15 espécies iniciais da Mata Atlântica
-* Contratar ilustrador para assets botânicos
-* Configurar Supabase + TinaCMS
-* Landing page com email capture
+| Nome       | Papel                                              |
+| ---------- | -------------------------------------------------- |
+| **Danilo** | Paisagismo, curadoria de nativas, visão            |
+| **Maria**  | Secretária, organização, gamificação, documentação |
+
+---
+
+## 💚 Filosofia
+
+> "Um bom jardim funciona com beleza, organização e plantas que contam histórias."
+
+*Le jardin est numérique, mais les racines sont brésiliennes.* 🌿
