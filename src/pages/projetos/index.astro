@@ -1,0 +1,79 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const projetos = await getCollection('projetos', ({ data }) => data.public === true);
+projetos.sort((a, b) => (b.data.created_at?.getTime() ?? 0) - (a.data.created_at?.getTime() ?? 0));
+
+const statusLabel: Record<string, string> = {
+  planejamento: 'Planejamento',
+  ativo: 'Ativo',
+  pausado: 'Pausado',
+  concluido: 'Concluído',
+};
+
+const statusBadge: Record<string, string> = {
+  planejamento: 'badge-medio',
+  ativo: 'badge-ok',
+  pausado: 'badge-alto',
+  concluido: 'badge-critico',
+};
+---
+
+<Base title="Projetos" description="Projetos e iniciativas desenvolvidos no Observatório Contenda/PR.">
+
+  <section class="pt-32 pb-20 px-6 max-w-7xl mx-auto">
+
+    <div class="mb-14">
+      <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-3">Iniciativas</p>
+      <h1 class="font-display font-black text-5xl md:text-6xl text-pergaminho-100 leading-tight mb-4">
+        Projetos
+      </h1>
+      <p class="font-body text-base text-pergaminho-200/60 max-w-xl leading-relaxed">
+        Ferramentas e plataformas digitais desenvolvidas a partir dos dados e diagnósticos do observatório.
+      </p>
+    </div>
+
+    {projetos.length === 0 ? (
+      <p class="font-body text-pergaminho-200/40 italic">Nenhum projeto público disponível ainda.</p>
+    ) : (
+      <div class="grid md:grid-cols-2 gap-6">
+        {projetos.map((projeto) => (
+          <a href={`/projetos/${projeto.slug}`}
+             class="indicador-card rounded-sm p-8 block group">
+            <div class="flex items-start justify-between mb-6">
+              <span class="font-mono text-4xl font-bold text-floresta-800 leading-none group-hover:text-floresta-700 transition-colors">
+                🌸
+              </span>
+              <span class={`inline-block ${statusBadge[projeto.data.status] ?? 'badge-medio'} font-mono text-[10px] px-2 py-1 rounded-sm`}>
+                {statusLabel[projeto.data.status] ?? projeto.data.status}
+              </span>
+            </div>
+
+            <h2 class="font-display text-2xl font-bold text-pergaminho-100 mb-2 group-hover:text-terracota-400 transition-colors leading-tight">
+              {projeto.data.title}
+            </h2>
+
+            {projeto.data.dominio && (
+              <p class="font-mono text-xs text-floresta-500 mb-4">{projeto.data.dominio}</p>
+            )}
+
+            {projeto.data.stack && (
+              <p class="font-body text-sm text-pergaminho-200/50 leading-relaxed">
+                {projeto.data.stack}
+              </p>
+            )}
+
+            <div class="mt-6 flex items-center gap-2 text-terracota-500 group-hover:text-terracota-400 transition-colors">
+              <span class="font-data text-xs tracking-wider uppercase">Ver projeto</span>
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
+
+</Base>

@@ -1,6 +1,6 @@
 ---
 title: "PIB Agropecuário — Composição e Riscos"
-theme: ""
+theme: "pib"
 source_url: "https://www.gov.br/seab/pt-br"
 source_org: "SEAB-PR / IBGE Contas Regionais"
 confidence: 0.75
