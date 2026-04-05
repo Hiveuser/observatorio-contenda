@@ -280,9 +280,10 @@ function CardModal({ imageUrl, arrangementDescription, onClose }: CardModalProps
           </div>
           <div style={{
             width: '100%', aspectRatio: '3/2',
-            background: 'linear-gradient(135deg, #fdf6e3, #f5ead0)',
-            borderRadius: '8px', overflow: 'hidden',
-            border: '1px solid rgba(196,92,42,0.3)',
+            background: 'linear-gradient(135deg, #fdf6e3 0%, #f5ead0 60%, #ede0c0 100%)',
+            borderRadius: '10px', overflow: 'hidden',
+            border: '1px solid rgba(196,92,42,0.25)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06)',
             position: 'relative', display: 'flex',
           }}>
             {imageUrl && (
@@ -638,15 +639,22 @@ export default function FlorAI() {
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', height: '100vh', minHeight: '700px',
-      background: '#0d1a0d', color: '#f5f0e8',
+      background: '#060e06',
+      backgroundImage: 'radial-gradient(ellipse at 60% 0%, rgba(45,106,79,0.18) 0%, transparent 60%), radial-gradient(ellipse at 10% 100%, rgba(196,92,42,0.08) 0%, transparent 50%)',
+      color: '#f5f0e8',
       fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif", userSelect: 'none',
     }}>
       {/* ── Top bar ── */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '0 24px', height: '56px',
-        borderBottom: '1px solid rgba(74,122,74,0.3)',
-        background: '#162416', flexShrink: 0,
+        borderBottom: '1px solid rgba(255,255,255,0.07)',
+        background: 'rgba(14,24,14,0.9)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        boxShadow: '0 1px 0 rgba(74,122,74,0.2)',
+        flexShrink: 0,
+        position: 'relative', zIndex: 10,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span style={{ fontWeight: 800, fontSize: '20px', letterSpacing: '0.12em', color: '#c45c2a', fontFamily: 'serif' }}>
@@ -690,8 +698,12 @@ export default function FlorAI() {
         {/* Left sidebar */}
         <div style={{
           width: '280px', flexShrink: 0,
-          borderRight: '1px solid rgba(74,122,74,0.3)',
-          background: '#162416', display: 'flex', flexDirection: 'column', overflow: 'hidden',
+          borderRight: '1px solid rgba(255,255,255,0.06)',
+          background: 'rgba(12,22,12,0.75)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          boxShadow: 'inset -1px 0 0 rgba(74,122,74,0.15)',
+          display: 'flex', flexDirection: 'column', overflow: 'hidden',
         }}>
           {/* Bioma filter */}
           <div style={{ padding: '14px 14px 0', borderBottom: '1px solid rgba(74,122,74,0.2)', flexShrink: 0 }}>
@@ -721,13 +733,27 @@ export default function FlorAI() {
                   onMouseLeave={() => setHoveredPlant(null)}
                   title={plant.name}
                   style={{
-                    background: '#1e321e', border: '1px solid rgba(74,122,74,0.3)',
-                    borderRadius: '6px', padding: '6px 4px 4px',
+                    background: 'rgba(20,36,20,0.6)', border: '1px solid rgba(74,122,74,0.25)',
+                    borderRadius: '8px', padding: '8px 4px 6px',
                     cursor: 'pointer', display: 'flex', flexDirection: 'column',
-                    alignItems: 'center', gap: '4px', transition: 'all 0.15s', fontFamily: 'inherit',
+                    alignItems: 'center', gap: '5px',
+                    transition: 'all 0.18s ease', fontFamily: 'inherit',
+                    backdropFilter: 'blur(4px)',
                   }}
-                  onMouseOver={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = '#c45c2a'; el.style.background = '#243824'; }}
-                  onMouseOut={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = 'rgba(74,122,74,0.3)'; el.style.background = '#1e321e'; }}
+                  onMouseOver={(e) => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.borderColor = 'rgba(196,92,42,0.7)';
+                    el.style.background = 'rgba(36,56,28,0.85)';
+                    el.style.transform = 'scale(1.04) translateY(-1px)';
+                    el.style.boxShadow = '0 6px 20px rgba(196,92,42,0.15)';
+                  }}
+                  onMouseOut={(e) => {
+                    const el = e.currentTarget as HTMLElement;
+                    el.style.borderColor = 'rgba(74,122,74,0.25)';
+                    el.style.background = 'rgba(20,36,20,0.6)';
+                    el.style.transform = 'scale(1) translateY(0)';
+                    el.style.boxShadow = 'none';
+                  }}
                 >
                   <img src={plant.svg} alt={plant.name} style={{ width: '52px', height: '52px', objectFit: 'contain', pointerEvents: 'none' }} />
                   <span style={{ fontSize: '8px', color: 'rgba(245,240,232,0.6)', textAlign: 'center', lineHeight: '1.2', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -762,15 +788,38 @@ export default function FlorAI() {
         {/* Canvas area */}
         <div style={{
           flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          padding: '24px', background: '#0d1a0d', overflow: 'hidden',
+          padding: '24px',
+          background: 'radial-gradient(ellipse at center, rgba(30,50,30,0.6) 0%, rgba(6,14,6,0.95) 100%)',
+          overflow: 'hidden', position: 'relative',
         }} onClick={(e) => { if (e.target === e.currentTarget) setSelectedId(null); }}>
+
+          {/* Empty state hint */}
+          {items.length === 0 && (
+            <div style={{
+              position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center', gap: '12px',
+              pointerEvents: 'none', zIndex: 0,
+            }}>
+              <svg width="56" height="56" viewBox="0 0 56 56" fill="none" style={{ opacity: 0.12 }}>
+                <circle cx="28" cy="28" r="27" stroke="#4a7a4a" strokeWidth="1.5" strokeDasharray="4 3"/>
+                <path d="M28 14c0 0-8 6-8 14s8 14 8 14" stroke="#c45c2a" strokeWidth="1.2" strokeLinecap="round"/>
+                <path d="M28 14c0 0 8 6 8 14s-8 14-8 14" stroke="#4a7a4a" strokeWidth="1.2" strokeLinecap="round"/>
+                <circle cx="28" cy="28" r="3" fill="#c45c2a" opacity="0.6"/>
+              </svg>
+              <span style={{ fontSize: '12px', color: 'rgba(245,240,232,0.18)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                selecione uma planta ←
+              </span>
+            </div>
+          )}
+
           <div style={{
-            borderRadius: '8px', overflow: 'hidden',
-            border: '1px solid rgba(74,122,74,0.4)',
-            boxShadow: '0 0 40px rgba(0,0,0,0.5)',
+            borderRadius: '10px', overflow: 'hidden',
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 0 0 1px rgba(74,122,74,0.2), 0 24px 80px rgba(0,0,0,0.7), 0 0 40px rgba(45,106,79,0.1)',
+            position: 'relative', zIndex: 1,
           }}>
             <Stage ref={stageRef} width={CANVAS_W} height={CANVAS_H}
-              style={{ display: 'block', background: '#1a2e1a' }}
+              style={{ display: 'block', background: 'linear-gradient(160deg, #1c321c 0%, #152515 50%, #121e12 100%)' }}
               onClick={handleStageClick} onTap={handleStageClick}>
               <Layer listening={false}>
                 <VaseNode vase={selectedVase} canvasW={CANVAS_W} canvasH={CANVAS_H} />
@@ -793,8 +842,12 @@ export default function FlorAI() {
         {/* Right panel */}
         <div style={{
           width: '220px', flexShrink: 0,
-          borderLeft: '1px solid rgba(74,122,74,0.3)',
-          background: '#162416', padding: '16px',
+          borderLeft: '1px solid rgba(255,255,255,0.06)',
+          background: 'rgba(12,22,12,0.75)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          boxShadow: 'inset 1px 0 0 rgba(74,122,74,0.15)',
+          padding: '16px',
           display: 'flex', flexDirection: 'column', gap: '20px',
         }}>
           {selectedItem && selectedPlant ? (
@@ -852,8 +905,11 @@ export default function FlorAI() {
 
       {/* Bottom info bar */}
       <div style={{
-        height: '32px', borderTop: '1px solid rgba(74,122,74,0.2)',
-        background: '#0d1a0d', display: 'flex', alignItems: 'center',
+        height: '32px', borderTop: '1px solid rgba(255,255,255,0.05)',
+        background: 'rgba(6,10,6,0.9)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        display: 'flex', alignItems: 'center',
         padding: '0 20px', gap: '24px', flexShrink: 0,
       }}>
         {hoveredPlant ? (
@@ -924,20 +980,31 @@ const controlBtnStyle: React.CSSProperties = {
 function topBtnStyle(border: string, bg: string): React.CSSProperties {
   return {
     display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px',
-    border: `1px solid ${border}55`, borderRadius: '4px', background: `${bg}33`,
+    border: `1px solid ${border}44`, borderRadius: '6px',
+    background: `${bg}22`,
+    backdropFilter: 'blur(8px)',
     color: 'rgba(245,240,232,0.85)', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit',
+    transition: 'all 0.18s ease',
+    letterSpacing: '0.01em',
   };
 }
 
 const overlayStyle: React.CSSProperties = {
-  position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)',
+  position: 'fixed', inset: 0,
+  background: 'rgba(5,10,5,0.72)',
+  backdropFilter: 'blur(22px)',
+  WebkitBackdropFilter: 'blur(22px)',
   display: 'flex', alignItems: 'center', justifyContent: 'center',
   zIndex: 1000, padding: '20px',
 };
 
 const modalStyle: React.CSSProperties = {
-  background: '#162416', border: '1px solid rgba(74,122,74,0.4)',
-  borderRadius: '12px', padding: '28px', boxShadow: '0 24px 60px rgba(0,0,0,0.6)',
+  background: 'rgba(18,30,18,0.88)',
+  backdropFilter: 'blur(40px)',
+  WebkitBackdropFilter: 'blur(40px)',
+  border: '1px solid rgba(255,255,255,0.09)',
+  borderRadius: '16px', padding: '28px',
+  boxShadow: '0 32px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06)',
   color: '#f5f0e8', fontFamily: "'DM Sans', system-ui, sans-serif",
   maxHeight: '90vh', overflowY: 'auto',
 };
@@ -949,14 +1016,21 @@ const iconBtnStyle: React.CSSProperties = {
 
 const primaryBtnStyle: React.CSSProperties = {
   display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 18px',
-  background: '#c45c2a', border: '1px solid #d97050', borderRadius: '5px',
+  background: 'linear-gradient(135deg, #c45c2a, #a03818)',
+  border: '1px solid rgba(196,92,42,0.5)',
+  boxShadow: '0 2px 12px rgba(196,92,42,0.25), inset 0 1px 0 rgba(255,255,255,0.1)',
+  borderRadius: '7px',
   color: '#f5f0e8', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 600,
+  transition: 'all 0.18s ease', letterSpacing: '0.01em',
 };
 
 const secondaryBtnStyle: React.CSSProperties = {
   display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 14px',
-  background: 'transparent', border: '1px solid rgba(74,122,74,0.5)', borderRadius: '5px',
+  background: 'rgba(255,255,255,0.04)',
+  backdropFilter: 'blur(8px)',
+  border: '1px solid rgba(255,255,255,0.1)', borderRadius: '7px',
   color: 'rgba(245,240,232,0.7)', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit',
+  transition: 'all 0.18s ease',
 };
 
 const fieldLabelStyle: React.CSSProperties = {
@@ -965,7 +1039,11 @@ const fieldLabelStyle: React.CSSProperties = {
 };
 
 const inputStyle: React.CSSProperties = {
-  width: '100%', background: '#0d1a0d', border: '1px solid rgba(74,122,74,0.35)',
-  borderRadius: '5px', padding: '8px 12px', color: '#f5f0e8', fontSize: '13px',
+  width: '100%',
+  background: 'rgba(255,255,255,0.04)',
+  backdropFilter: 'blur(8px)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '7px', padding: '9px 12px', color: '#f5f0e8', fontSize: '13px',
   fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box',
+  transition: 'border-color 0.15s',
 };
