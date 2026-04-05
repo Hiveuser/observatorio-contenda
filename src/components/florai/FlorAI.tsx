@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Stage, Layer, Image as KonvaImage, Transformer } from 'react-konva';
 import useImage from 'use-image';
-import { PLANTS, VASES, BIOMA_LABELS, type Plant, type Vase, type Bioma } from './data';
+import { PLANTS, VASES, BIOMA_LABELS, type Plant, type Vase } from './data';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -16,7 +16,7 @@ interface CanvasItem {
   opacity: number;
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Sub-components ────────────────────────────────────────────────────��──────
 
 interface PlantNodeProps {
   item: CanvasItem;
@@ -56,16 +56,12 @@ function PlantNode({ item, plant, isSelected, onSelect, onChange }: PlantNodePro
         draggable
         onClick={() => onSelect(item.id)}
         onTap={() => onSelect(item.id)}
-        onDragEnd={(e) => {
-          onChange(item.id, { x: e.target.x(), y: e.target.y() });
-        }}
+        onDragEnd={(e) => onChange(item.id, { x: e.target.x(), y: e.target.y() })}
         onTransformEnd={(e) => {
           const node = imgRef.current;
           onChange(item.id, {
-            x: node.x(),
-            y: node.y(),
-            scaleX: node.scaleX(),
-            scaleY: node.scaleY(),
+            x: node.x(), y: node.y(),
+            scaleX: node.scaleX(), scaleY: node.scaleY(),
             rotation: node.rotation(),
           });
         }}
@@ -73,11 +69,8 @@ function PlantNode({ item, plant, isSelected, onSelect, onChange }: PlantNodePro
       {isSelected && (
         <Transformer
           ref={trRef}
-          boundBoxFunc={(oldBox, newBox) => {
-            if (newBox.width < 20 || newBox.height < 20) return oldBox;
-            return newBox;
-          }}
-          rotateEnabled={true}
+          boundBoxFunc={(oldBox, newBox) => (newBox.width < 20 || newBox.height < 20 ? oldBox : newBox)}
+          rotateEnabled
           keepRatio={false}
           borderStroke="#4a7a4a"
           anchorStroke="#4a7a4a"
@@ -90,62 +83,412 @@ function PlantNode({ item, plant, isSelected, onSelect, onChange }: PlantNodePro
   );
 }
 
-interface VaseNodeProps {
-  vase: Vase;
-  canvasW: number;
-  canvasH: number;
-}
-
+interface VaseNodeProps { vase: Vase; canvasW: number; canvasH: number; }
 function VaseNode({ vase, canvasW, canvasH }: VaseNodeProps) {
   const [img] = useImage(vase.svg);
   const scale = Math.min((canvasW * 0.55) / vase.width, (canvasH * 0.65) / vase.height);
   const w = vase.width * scale;
   const h = vase.height * scale;
   return (
-    <KonvaImage
-      image={img}
-      x={canvasW / 2}
-      y={canvasH - 20}
-      width={w}
-      height={h}
-      offsetX={w / 2}
-      offsetY={h}
-      listening={false}
-    />
+    <KonvaImage image={img} x={canvasW / 2} y={canvasH - 20}
+      width={w} height={h} offsetX={w / 2} offsetY={h} listening={false} />
   );
 }
 
-// ─── Icon helpers ─────────────────────────────────────────────────────────────
+// ─── Icons ────────────────────────────────────────────────────────────────────
 
-const IconTrash = () => (
-  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" d="m19 7-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16"/>
-  </svg>
-);
+const IconTrash = () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m19 7-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16"/></svg>;
+const IconExport = () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>;
+const IconClear = () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>;
+const IconUp = () => <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/></svg>;
+const IconDown = () => <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>;
+const IconSparkle = () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"/></svg>;
+const IconCard = () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 9v.906a2.25 2.25 0 0 1-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 0 0 1.183 1.981l6.478 3.488m8.839 2.51-4.66-2.51m0 0-1.023-.55a2.25 2.25 0 0 0-2.134 0l-1.022.55m0 0-4.661 2.51m16.5 1.615a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V8.844a2.25 2.25 0 0 1 1.183-1.981l7.5-4.039a2.25 2.25 0 0 1 2.134 0l7.5 4.039a2.25 2.25 0 0 1 1.183 1.98V19.5Z"/></svg>;
+const IconAI = () => <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"/></svg>;
+const IconClose = () => <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>;
+const IconDownload = () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>;
 
-const IconExport = () => (
-  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/>
-  </svg>
-);
+// ─── Realistic Image Modal ────────────────────────────────────────────────────
 
-const IconClear = () => (
-  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12"/>
-  </svg>
-);
+interface ImageModalProps {
+  imageUrl: string | null;
+  isLoading: boolean;
+  error: string | null;
+  onClose: () => void;
+  onOpenCard: (url: string) => void;
+}
 
-const IconUp = () => (
-  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5"/>
-  </svg>
-);
+function ImageModal({ imageUrl, isLoading, error, onClose, onOpenCard }: ImageModalProps) {
+  const download = () => {
+    if (!imageUrl) return;
+    const a = document.createElement('a');
+    a.href = imageUrl;
+    a.download = 'florai-realista.jpg';
+    a.click();
+  };
 
-const IconDown = () => (
-  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/>
-  </svg>
-);
+  return (
+    <div style={overlayStyle} onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div style={{ ...modalStyle, maxWidth: '700px', width: '90vw' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <div>
+            <div style={{ fontSize: '16px', fontWeight: 700, color: '#f5f0e8', marginBottom: '2px' }}>
+              Imagem Realista
+            </div>
+            <div style={{ fontSize: '11px', color: 'rgba(245,240,232,0.4)' }}>
+              Gerada por IA · FLUX model
+            </div>
+          </div>
+          <button onClick={onClose} style={iconBtnStyle}><IconClose /></button>
+        </div>
+
+        {/* Content */}
+        <div style={{
+          width: '100%', aspectRatio: '4/3',
+          background: '#0d1a0d',
+          border: '1px solid rgba(74,122,74,0.3)',
+          borderRadius: '6px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          overflow: 'hidden', marginBottom: '16px',
+        }}>
+          {isLoading && (
+            <div style={{ textAlign: 'center', color: 'rgba(245,240,232,0.4)' }}>
+              <LoadingSpinner />
+              <div style={{ marginTop: '16px', fontSize: '13px' }}>Gerando imagem realista...</div>
+              <div style={{ marginTop: '6px', fontSize: '11px', opacity: 0.5 }}>pode levar 10–20 segundos</div>
+            </div>
+          )}
+          {error && (
+            <div style={{ textAlign: 'center', color: '#ef4444', padding: '20px' }}>
+              <div style={{ fontSize: '13px', marginBottom: '8px' }}>{error}</div>
+              <div style={{ fontSize: '11px', opacity: 0.6 }}>Verifique sua conexão e tente novamente.</div>
+            </div>
+          )}
+          {imageUrl && !isLoading && (
+            <img src={imageUrl} alt="Arranjo realista"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          )}
+        </div>
+
+        {imageUrl && !isLoading && (
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+            <button onClick={download} style={secondaryBtnStyle}>
+              <IconDownload /> Baixar imagem
+            </button>
+            <button onClick={() => onOpenCard(imageUrl)} style={primaryBtnStyle}>
+              <IconCard /> Criar Cartão Presente
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Card Modal ───────────────────────────────────────────────────────────────
+
+interface CardModalProps {
+  imageUrl: string | null;
+  arrangementDescription: string;
+  onClose: () => void;
+}
+
+function CardModal({ imageUrl, arrangementDescription, onClose }: CardModalProps) {
+  const [recipient, setRecipient] = useState('');
+  const [message, setMessage] = useState('');
+  const [sender, setSender] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [msgError, setMsgError] = useState('');
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const generateMessage = async () => {
+    setIsGenerating(true);
+    setMsgError('');
+    const recipientHint = recipient ? `para ${recipient}` : 'para alguém especial';
+    const prompt = `Escreva uma mensagem de presente curta (2-3 frases, máximo 180 caracteres), carinhosa e poética ${recipientHint}, acompanhando um arranjo floral com ${arrangementDescription}. Use português brasileiro. Sem aspas, sem formatação. Apenas o texto da mensagem.`;
+    try {
+      const res = await fetch(
+        `https://text.pollinations.ai/${encodeURIComponent(prompt)}`,
+        { headers: { 'Accept': 'text/plain' } }
+      );
+      if (!res.ok) throw new Error('Falha na geração');
+      const text = await res.text();
+      setMessage(text.trim().replace(/^["']|["']$/g, ''));
+    } catch {
+      setMsgError('Não foi possível gerar a mensagem. Tente novamente ou escreva à mão.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const downloadCard = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 900;
+    canvas.height = 600;
+    const ctx = canvas.getContext('2d')!;
+
+    // Background gradient (parchment)
+    const grad = ctx.createLinearGradient(0, 0, 900, 600);
+    grad.addColorStop(0, '#fdf6e3');
+    grad.addColorStop(1, '#f5ead0');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 900, 600);
+
+    // Left photo area
+    if (imageUrl) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, 400, 600);
+        ctx.clip();
+        ctx.drawImage(img, 0, 0, 400, 600);
+        ctx.restore();
+
+        // Gradient fade from photo to parchment
+        const fade = ctx.createLinearGradient(320, 0, 420, 0);
+        fade.addColorStop(0, 'rgba(253,246,227,0)');
+        fade.addColorStop(1, 'rgba(253,246,227,1)');
+        ctx.fillStyle = fade;
+        ctx.fillRect(320, 0, 100, 600);
+
+        renderCardText(ctx, canvas, recipient, message, sender);
+        triggerDownload(canvas);
+      };
+      img.src = imageUrl;
+    } else {
+      // No image — floral background pattern
+      ctx.fillStyle = '#2D6A4F22';
+      ctx.fillRect(0, 0, 400, 600);
+      renderCardText(ctx, canvas, recipient, message, sender);
+      triggerDownload(canvas);
+    }
+  };
+
+  return (
+    <div style={overlayStyle} onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div style={{ ...modalStyle, maxWidth: '860px', width: '95vw', display: 'flex', gap: '24px' }}>
+        {/* Left: card preview */}
+        <div style={{ flex: '0 0 380px' }}>
+          <div style={{
+            fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase',
+            color: 'rgba(245,240,232,0.35)', marginBottom: '10px',
+          }}>
+            Prévia do Cartão
+          </div>
+          <div style={{
+            width: '100%', aspectRatio: '3/2',
+            background: 'linear-gradient(135deg, #fdf6e3, #f5ead0)',
+            borderRadius: '8px', overflow: 'hidden',
+            border: '1px solid rgba(196,92,42,0.3)',
+            position: 'relative', display: 'flex',
+          }}>
+            {imageUrl && (
+              <img src={imageUrl} alt="" style={{
+                width: '45%', height: '100%', objectFit: 'cover',
+                borderRadius: '8px 0 0 8px',
+              }} />
+            )}
+            <div style={{
+              flex: 1, padding: '18px 16px', display: 'flex',
+              flexDirection: 'column', justifyContent: 'center', gap: '10px',
+            }}>
+              {recipient && (
+                <div style={{ fontSize: '13px', color: '#5a3e28', fontFamily: 'serif', fontStyle: 'italic' }}>
+                  Para {recipient},
+                </div>
+              )}
+              <div style={{
+                fontSize: '11px', color: '#7a5c3a', lineHeight: '1.6',
+                fontFamily: 'serif', flex: 1,
+              }}>
+                {message || <span style={{ opacity: 0.3 }}>sua mensagem aqui...</span>}
+              </div>
+              {sender && (
+                <div style={{ fontSize: '11px', color: '#8a6c4a', fontFamily: 'serif', textAlign: 'right', fontStyle: 'italic' }}>
+                  — {sender}
+                </div>
+              )}
+              <div style={{
+                fontSize: '9px', letterSpacing: '0.15em', color: '#c45c2a',
+                textTransform: 'uppercase', marginTop: '4px',
+              }}>
+                FLOR.AI · Nativas Brasileiras
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: form */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+            <div>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: '#f5f0e8', marginBottom: '2px' }}>Cartão Presente</div>
+              <div style={{ fontSize: '11px', color: 'rgba(245,240,232,0.4)' }}>Personalize a mensagem</div>
+            </div>
+            <button onClick={onClose} style={iconBtnStyle}><IconClose /></button>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', flex: 1 }}>
+            <div>
+              <label style={fieldLabelStyle}>Para</label>
+              <input
+                type="text"
+                value={recipient}
+                onChange={(e) => setRecipient(e.target.value)}
+                placeholder="nome de quem vai receber"
+                style={inputStyle}
+              />
+            </div>
+
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <label style={{ ...fieldLabelStyle, marginBottom: 0 }}>Mensagem</label>
+                <button
+                  onClick={generateMessage}
+                  disabled={isGenerating}
+                  style={{
+                    ...secondaryBtnStyle,
+                    padding: '4px 10px',
+                    fontSize: '11px',
+                    opacity: isGenerating ? 0.6 : 1,
+                  }}
+                >
+                  {isGenerating ? <><LoadingDots /> Gerando...</> : <><IconAI /> Gerar com IA</>}
+                </button>
+              </div>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Escreva uma mensagem ou deixe a IA criar..."
+                rows={5}
+                style={{ ...inputStyle, resize: 'vertical', flex: 1, minHeight: '100px' }}
+              />
+              {msgError && <div style={{ fontSize: '11px', color: '#ef4444', marginTop: '4px' }}>{msgError}</div>}
+            </div>
+
+            <div>
+              <label style={fieldLabelStyle}>De</label>
+              <input
+                type="text"
+                value={sender}
+                onChange={(e) => setSender(e.target.value)}
+                placeholder="seu nome"
+                style={inputStyle}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px', marginTop: '20px', justifyContent: 'flex-end' }}>
+            <button onClick={onClose} style={secondaryBtnStyle}>Cancelar</button>
+            <button onClick={downloadCard} style={primaryBtnStyle}>
+              <IconDownload /> Baixar Cartão
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function renderCardText(
+  ctx: CanvasRenderingContext2D,
+  _canvas: HTMLCanvasElement,
+  recipient: string,
+  message: string,
+  sender: string
+) {
+  const x = 440;
+  const maxW = 420;
+
+  // Decorative line
+  ctx.strokeStyle = '#c45c2a55';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x, 80);
+  ctx.lineTo(x + maxW, 80);
+  ctx.stroke();
+
+  ctx.fillStyle = '#5a3e28';
+  if (recipient) {
+    ctx.font = 'italic 22px Georgia, serif';
+    ctx.fillText(`Para ${recipient},`, x, 130);
+  }
+
+  // Message body — word wrap
+  ctx.font = '18px Georgia, serif';
+  ctx.fillStyle = '#7a5c3a';
+  const words = message.split(' ');
+  let line = '';
+  let y = recipient ? 180 : 150;
+  for (const word of words) {
+    const test = line + word + ' ';
+    if (ctx.measureText(test).width > maxW && line !== '') {
+      ctx.fillText(line.trim(), x, y);
+      line = word + ' ';
+      y += 30;
+    } else {
+      line = test;
+    }
+  }
+  if (line.trim()) ctx.fillText(line.trim(), x, y);
+
+  if (sender) {
+    ctx.font = 'italic 16px Georgia, serif';
+    ctx.fillStyle = '#8a6c4a';
+    ctx.textAlign = 'right';
+    ctx.fillText(`— ${sender}`, x + maxW, 500);
+    ctx.textAlign = 'left';
+  }
+
+  // Branding
+  ctx.font = '11px "DM Sans", Arial, sans-serif';
+  ctx.fillStyle = '#c45c2a';
+  ctx.letterSpacing = '2px';
+  ctx.fillText('FLOR.AI · NATIVAS BRASILEIRAS', x, 560);
+
+  // Bottom decorative line
+  ctx.strokeStyle = '#c45c2a55';
+  ctx.beginPath();
+  ctx.moveTo(x, 540);
+  ctx.lineTo(x + maxW, 540);
+  ctx.stroke();
+}
+
+function triggerDownload(canvas: HTMLCanvasElement) {
+  canvas.toBlob((blob) => {
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'florai-cartao.png';
+    a.click();
+    URL.revokeObjectURL(url);
+  }, 'image/png');
+}
+
+// ─── Loading helpers ─────────────────────────────────────────────────────��────
+
+function LoadingSpinner() {
+  const [angle, setAngle] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setAngle((a) => (a + 10) % 360), 40);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <svg width="40" height="40" viewBox="0 0 40 40" style={{ display: 'block', margin: '0 auto' }}>
+      <circle cx="20" cy="20" r="16" fill="none" stroke="rgba(74,122,74,0.2)" strokeWidth="3"/>
+      <path d="M20 4 A16 16 0 0 1 36 20" fill="none" stroke="#4a7a4a" strokeWidth="3" strokeLinecap="round"
+        transform={`rotate(${angle} 20 20)`}/>
+    </svg>
+  );
+}
+
+function LoadingDots() {
+  return <span style={{ letterSpacing: '2px', fontSize: '14px' }}>···</span>;
+}
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -157,17 +500,80 @@ export default function FlorAI() {
   const [hoveredPlant, setHoveredPlant] = useState<Plant | null>(null);
   const stageRef = useRef<any>(null);
 
+  // Realistic image state
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  // Card state
+  const [showCardModal, setShowCardModal] = useState(false);
+  const [cardImageUrl, setCardImageUrl] = useState<string | null>(null);
+
   const CANVAS_W = 600;
   const CANVAS_H = 500;
 
   const selectedVase = VASES.find((v) => v.id === selectedVaseId) ?? VASES[0];
   const selectedItem = items.find((i) => i.id === selectedId) ?? null;
   const selectedPlant = selectedItem ? PLANTS.find((p) => p.id === selectedItem.plantId) : null;
+  const filteredPlants = selectedBioma === 'todos' ? PLANTS : PLANTS.filter((p) => p.bioma === selectedBioma);
 
-  const filteredPlants =
-    selectedBioma === 'todos'
-      ? PLANTS
-      : PLANTS.filter((p) => p.bioma === selectedBioma);
+  // Build a human-readable description of the current arrangement
+  const arrangementDescription = useCallback(() => {
+    if (items.length === 0) return 'plantas nativas brasileiras';
+    const plantNames = [...new Set(items.map((i) => {
+      const p = PLANTS.find((pl) => pl.id === i.plantId);
+      return p?.name ?? '';
+    }).filter(Boolean))];
+    const vase = VASES.find((v) => v.id === selectedVaseId);
+    const parts = plantNames.slice(0, 4).join(', ');
+    return `${parts}${vase ? ` em ${vase.name.toLowerCase()}` : ''}`;
+  }, [items, selectedVaseId]);
+
+  // Build image generation prompt
+  const buildImagePrompt = useCallback(() => {
+    const desc = arrangementDescription();
+    const vase = VASES.find((v) => v.id === selectedVaseId);
+    return [
+      'hyperrealistic studio photograph of a beautiful floral arrangement',
+      `featuring Brazilian native plants: ${desc}`,
+      vase ? `arranged in a ${vase.name}` : '',
+      'professional flower photography, soft natural lighting, shallow depth of field',
+      'elegant gift presentation, white marble surface, 8K, sharp focus',
+      'botanical art, lush vibrant colors, photorealistic',
+    ].filter(Boolean).join(', ');
+  }, [arrangementDescription, selectedVaseId]);
+
+  const generateRealisticImage = useCallback(async () => {
+    setShowImageModal(true);
+    setIsGeneratingImage(true);
+    setGeneratedImageUrl(null);
+    setImageError(null);
+
+    const prompt = buildImagePrompt();
+    const width = 1024;
+    const height = 768;
+    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&nologo=true&model=flux&seed=${Math.floor(Math.random() * 99999)}`;
+
+    try {
+      // Pollinations returns the image directly at the URL — we just set it as src
+      // Preload to check it loads correctly
+      await new Promise<void>((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('Falha ao carregar imagem gerada.'));
+        img.src = url;
+        // Timeout after 40s
+        setTimeout(() => reject(new Error('Tempo esgotado. Tente novamente.')), 40000);
+      });
+      setGeneratedImageUrl(url);
+    } catch (err: any) {
+      setImageError(err.message ?? 'Erro ao gerar imagem.');
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  }, [buildImagePrompt]);
 
   const addPlant = useCallback((plant: Plant) => {
     const jitter = () => (Math.random() - 0.5) * 80;
@@ -176,19 +582,14 @@ export default function FlorAI() {
       plantId: plant.id,
       x: CANVAS_W / 2 + jitter(),
       y: CANVAS_H * 0.45 + jitter(),
-      scaleX: 1,
-      scaleY: 1,
-      rotation: 0,
-      opacity: 1,
+      scaleX: 1, scaleY: 1, rotation: 0, opacity: 1,
     };
     setItems((prev) => [...prev, newItem]);
     setSelectedId(newItem.id);
   }, []);
 
   const updateItem = useCallback((id: string, attrs: Partial<CanvasItem>) => {
-    setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, ...attrs } : item))
-    );
+    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, ...attrs } : item)));
   }, []);
 
   const deleteSelected = useCallback(() => {
@@ -197,23 +598,17 @@ export default function FlorAI() {
     setSelectedId(null);
   }, [selectedId]);
 
-  const moveLayer = useCallback(
-    (dir: 'up' | 'down') => {
-      if (!selectedId) return;
-      setItems((prev) => {
-        const idx = prev.findIndex((i) => i.id === selectedId);
-        if (idx === -1) return prev;
-        const next = [...prev];
-        if (dir === 'up' && idx < next.length - 1) {
-          [next[idx], next[idx + 1]] = [next[idx + 1], next[idx]];
-        } else if (dir === 'down' && idx > 0) {
-          [next[idx], next[idx - 1]] = [next[idx - 1], next[idx]];
-        }
-        return next;
-      });
-    },
-    [selectedId]
-  );
+  const moveLayer = useCallback((dir: 'up' | 'down') => {
+    if (!selectedId) return;
+    setItems((prev) => {
+      const idx = prev.findIndex((i) => i.id === selectedId);
+      if (idx === -1) return prev;
+      const next = [...prev];
+      if (dir === 'up' && idx < next.length - 1) [next[idx], next[idx + 1]] = [next[idx + 1], next[idx]];
+      else if (dir === 'down' && idx > 0) [next[idx], next[idx - 1]] = [next[idx - 1], next[idx]];
+      return next;
+    });
+  }, [selectedId]);
 
   const exportPng = useCallback(() => {
     if (!stageRef.current) return;
@@ -224,153 +619,92 @@ export default function FlorAI() {
     a.click();
   }, []);
 
-  const clearAll = useCallback(() => {
-    setItems([]);
-    setSelectedId(null);
+  const clearAll = useCallback(() => { setItems([]); setSelectedId(null); }, []);
+
+  const handleStageClick = useCallback((e: any) => {
+    if (e.target === e.target.getStage()) setSelectedId(null);
   }, []);
 
-  // Deselect on stage background click
-  const handleStageClick = useCallback(
-    (e: any) => {
-      if (e.target === e.target.getStage()) {
-        setSelectedId(null);
-      }
-    },
-    []
-  );
-
-  // Delete key
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedId) {
-        deleteSelected();
-      }
+      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedId) deleteSelected();
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [selectedId, deleteSelected]);
 
-  const biomas = ['todos', 'mata-atletica', 'cerrado', 'amazonia', 'caatinga', 'pampa', 'pantanal'];
   const biomaKeys = Object.keys(BIOMA_LABELS);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        minHeight: '700px',
-        background: '#0d1a0d',
-        color: '#f5f0e8',
-        fontFamily: "'Inter', 'system-ui', sans-serif",
-        userSelect: 'none',
-      }}
-    >
-      {/* Top bar */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 24px',
-          height: '56px',
-          borderBottom: '1px solid rgba(74,122,74,0.3)',
-          background: '#162416',
-          flexShrink: 0,
-        }}
-      >
+    <div style={{
+      display: 'flex', flexDirection: 'column', height: '100vh', minHeight: '700px',
+      background: '#0d1a0d', color: '#f5f0e8',
+      fontFamily: "'DM Sans', 'Inter', system-ui, sans-serif", userSelect: 'none',
+    }}>
+      {/* ── Top bar ── */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '0 24px', height: '56px',
+        borderBottom: '1px solid rgba(74,122,74,0.3)',
+        background: '#162416', flexShrink: 0,
+      }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span
-            style={{
-              fontWeight: 800,
-              fontSize: '20px',
-              letterSpacing: '0.12em',
-              color: '#c45c2a',
-              fontFamily: 'serif',
-            }}
-          >
+          <span style={{ fontWeight: 800, fontSize: '20px', letterSpacing: '0.12em', color: '#c45c2a', fontFamily: 'serif' }}>
             FLOR.AI
           </span>
-          <span
-            style={{
-              fontSize: '11px',
-              color: 'rgba(245,240,232,0.35)',
-              letterSpacing: '0.08em',
-              fontVariant: 'small-caps',
-            }}
-          >
+          <span style={{ fontSize: '11px', color: 'rgba(245,240,232,0.35)', letterSpacing: '0.08em' }}>
             Arranjos com Nativas Brasileiras
           </span>
         </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
           <button
-            onClick={exportPng}
-            style={topBtnStyle('#4a7a4a', '#2D6A4F')}
+            onClick={generateRealisticImage}
+            disabled={items.length === 0}
+            title={items.length === 0 ? 'Adicione plantas ao arranjo primeiro' : 'Gerar imagem fotorrealista'}
+            style={{
+              ...topBtnStyle('#a855f7', '#7c3aed'),
+              opacity: items.length === 0 ? 0.4 : 1,
+              cursor: items.length === 0 ? 'not-allowed' : 'pointer',
+            }}
           >
-            <IconExport />
-            Exportar PNG
+            <IconSparkle /> Gerar Imagem Realista
           </button>
           <button
-            onClick={clearAll}
-            style={topBtnStyle('#7a2a2a', '#5a1a1a')}
+            onClick={() => { setCardImageUrl(null); setShowCardModal(true); }}
+            style={topBtnStyle('#c45c2a', '#a03818')}
           >
+            <IconCard /> Cartão Presente
+          </button>
+          <button onClick={exportPng} style={topBtnStyle('#4a7a4a', '#2D6A4F')}>
+            <IconExport /> PNG
+          </button>
+          <button onClick={clearAll} style={topBtnStyle('#7a2a2a', '#5a1a1a')}>
             <IconClear />
-            Limpar
           </button>
         </div>
       </div>
 
-      {/* Main layout */}
+      {/* ── Main layout ── */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+
         {/* Left sidebar */}
-        <div
-          style={{
-            width: '280px',
-            flexShrink: 0,
-            borderRight: '1px solid rgba(74,122,74,0.3)',
-            background: '#162416',
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-          }}
-        >
+        <div style={{
+          width: '280px', flexShrink: 0,
+          borderRight: '1px solid rgba(74,122,74,0.3)',
+          background: '#162416', display: 'flex', flexDirection: 'column', overflow: 'hidden',
+        }}>
           {/* Bioma filter */}
-          <div
-            style={{
-              padding: '14px 14px 0',
-              borderBottom: '1px solid rgba(74,122,74,0.2)',
-              flexShrink: 0,
-            }}
-          >
-            <div
-              style={{
-                fontSize: '9px',
-                letterSpacing: '0.15em',
-                color: 'rgba(245,240,232,0.4)',
-                textTransform: 'uppercase',
-                marginBottom: '8px',
-              }}
-            >
-              Bioma
-            </div>
+          <div style={{ padding: '14px 14px 0', borderBottom: '1px solid rgba(74,122,74,0.2)', flexShrink: 0 }}>
+            <div style={microLabel}>Bioma</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', paddingBottom: '12px' }}>
               {biomaKeys.map((b) => (
-                <button
-                  key={b}
-                  onClick={() => setSelectedBioma(b)}
-                  style={{
-                    padding: '4px 9px',
-                    borderRadius: '3px',
-                    border: '1px solid',
-                    borderColor: selectedBioma === b ? '#c45c2a' : 'rgba(74,122,74,0.4)',
-                    background: selectedBioma === b ? '#c45c2a22' : 'transparent',
-                    color: selectedBioma === b ? '#c45c2a' : 'rgba(245,240,232,0.55)',
-                    fontSize: '10px',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s',
-                    fontFamily: 'inherit',
-                  }}
-                >
+                <button key={b} onClick={() => setSelectedBioma(b)} style={{
+                  padding: '4px 9px', borderRadius: '3px', border: '1px solid',
+                  borderColor: selectedBioma === b ? '#c45c2a' : 'rgba(74,122,74,0.4)',
+                  background: selectedBioma === b ? '#c45c2a22' : 'transparent',
+                  color: selectedBioma === b ? '#c45c2a' : 'rgba(245,240,232,0.55)',
+                  fontSize: '10px', cursor: 'pointer', fontFamily: 'inherit',
+                }}>
                   {BIOMA_LABELS[b] ?? b}
                 </button>
               ))}
@@ -378,84 +712,25 @@ export default function FlorAI() {
           </div>
 
           {/* Plant grid */}
-          <div
-            style={{
-              flex: 1,
-              overflowY: 'auto',
-              padding: '12px',
-              scrollbarWidth: 'thin',
-              scrollbarColor: 'rgba(74,122,74,0.4) transparent',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '9px',
-                letterSpacing: '0.15em',
-                color: 'rgba(245,240,232,0.4)',
-                textTransform: 'uppercase',
-                marginBottom: '10px',
-              }}
-            >
-              Plantas ({filteredPlants.length})
-            </div>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '6px',
-              }}
-            >
+          <div style={{ flex: 1, overflowY: 'auto', padding: '12px', scrollbarWidth: 'thin', scrollbarColor: 'rgba(74,122,74,0.4) transparent' }}>
+            <div style={microLabel}>Plantas ({filteredPlants.length})</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
               {filteredPlants.map((plant) => (
-                <button
-                  key={plant.id}
-                  onClick={() => addPlant(plant)}
+                <button key={plant.id} onClick={() => addPlant(plant)}
                   onMouseEnter={() => setHoveredPlant(plant)}
                   onMouseLeave={() => setHoveredPlant(null)}
                   title={plant.name}
                   style={{
-                    background: '#1e321e',
-                    border: '1px solid rgba(74,122,74,0.3)',
-                    borderRadius: '6px',
-                    padding: '6px 4px 4px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '4px',
-                    transition: 'border-color 0.15s, background 0.15s',
-                    fontFamily: 'inherit',
+                    background: '#1e321e', border: '1px solid rgba(74,122,74,0.3)',
+                    borderRadius: '6px', padding: '6px 4px 4px',
+                    cursor: 'pointer', display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', gap: '4px', transition: 'all 0.15s', fontFamily: 'inherit',
                   }}
-                  onMouseOver={(e) => {
-                    (e.currentTarget as HTMLElement).style.borderColor = '#c45c2a';
-                    (e.currentTarget as HTMLElement).style.background = '#243824';
-                  }}
-                  onMouseOut={(e) => {
-                    (e.currentTarget as HTMLElement).style.borderColor = 'rgba(74,122,74,0.3)';
-                    (e.currentTarget as HTMLElement).style.background = '#1e321e';
-                  }}
+                  onMouseOver={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = '#c45c2a'; el.style.background = '#243824'; }}
+                  onMouseOut={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = 'rgba(74,122,74,0.3)'; el.style.background = '#1e321e'; }}
                 >
-                  <img
-                    src={plant.svg}
-                    alt={plant.name}
-                    style={{
-                      width: '52px',
-                      height: '52px',
-                      objectFit: 'contain',
-                      pointerEvents: 'none',
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontSize: '8px',
-                      color: 'rgba(245,240,232,0.6)',
-                      textAlign: 'center',
-                      lineHeight: '1.2',
-                      maxWidth: '100%',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
+                  <img src={plant.svg} alt={plant.name} style={{ width: '52px', height: '52px', objectFit: 'contain', pointerEvents: 'none' }} />
+                  <span style={{ fontSize: '8px', color: 'rgba(245,240,232,0.6)', textAlign: 'center', lineHeight: '1.2', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {plant.name}
                   </span>
                 </button>
@@ -464,50 +739,17 @@ export default function FlorAI() {
           </div>
 
           {/* Vase selector */}
-          <div
-            style={{
-              borderTop: '1px solid rgba(74,122,74,0.2)',
-              padding: '12px',
-              flexShrink: 0,
-            }}
-          >
-            <div
-              style={{
-                fontSize: '9px',
-                letterSpacing: '0.15em',
-                color: 'rgba(245,240,232,0.4)',
-                textTransform: 'uppercase',
-                marginBottom: '8px',
-              }}
-            >
-              Vaso
-            </div>
+          <div style={{ borderTop: '1px solid rgba(74,122,74,0.2)', padding: '12px', flexShrink: 0 }}>
+            <div style={microLabel}>Vaso</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '5px' }}>
               {VASES.map((v) => (
-                <button
-                  key={v.id}
-                  onClick={() => setSelectedVaseId(v.id)}
-                  title={v.name}
-                  style={{
-                    background: selectedVaseId === v.id ? '#2D6A4F33' : '#1e321e',
-                    border: '1px solid',
-                    borderColor: selectedVaseId === v.id ? '#4a7a4a' : 'rgba(74,122,74,0.25)',
-                    borderRadius: '5px',
-                    padding: '5px 2px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '3px',
-                    transition: 'all 0.15s',
-                    fontFamily: 'inherit',
-                  }}
-                >
-                  <img
-                    src={v.svg}
-                    alt={v.name}
-                    style={{ width: '40px', height: '40px', objectFit: 'contain' }}
-                  />
+                <button key={v.id} onClick={() => setSelectedVaseId(v.id)} title={v.name} style={{
+                  background: selectedVaseId === v.id ? '#2D6A4F33' : '#1e321e',
+                  border: '1px solid', borderColor: selectedVaseId === v.id ? '#4a7a4a' : 'rgba(74,122,74,0.25)',
+                  borderRadius: '5px', padding: '5px 2px', cursor: 'pointer',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', fontFamily: 'inherit',
+                }}>
+                  <img src={v.svg} alt={v.name} style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
                   <span style={{ fontSize: '7px', color: 'rgba(245,240,232,0.5)', textAlign: 'center' }}>
                     {v.name.split(' ').slice(0, 2).join(' ')}
                   </span>
@@ -518,55 +760,29 @@ export default function FlorAI() {
         </div>
 
         {/* Canvas area */}
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '24px',
-            background: '#0d1a0d',
-            overflow: 'hidden',
-          }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setSelectedId(null);
-          }}
-        >
-          <div
-            style={{
-              borderRadius: '8px',
-              overflow: 'hidden',
-              border: '1px solid rgba(74,122,74,0.4)',
-              boxShadow: '0 0 40px rgba(0,0,0,0.5)',
-              background: '#1a2e1a',
-            }}
-          >
-            <Stage
-              ref={stageRef}
-              width={CANVAS_W}
-              height={CANVAS_H}
+        <div style={{
+          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '24px', background: '#0d1a0d', overflow: 'hidden',
+        }} onClick={(e) => { if (e.target === e.currentTarget) setSelectedId(null); }}>
+          <div style={{
+            borderRadius: '8px', overflow: 'hidden',
+            border: '1px solid rgba(74,122,74,0.4)',
+            boxShadow: '0 0 40px rgba(0,0,0,0.5)',
+          }}>
+            <Stage ref={stageRef} width={CANVAS_W} height={CANVAS_H}
               style={{ display: 'block', background: '#1a2e1a' }}
-              onClick={handleStageClick}
-              onTap={handleStageClick}
-            >
-              {/* Vase layer (bottom, not interactive) */}
+              onClick={handleStageClick} onTap={handleStageClick}>
               <Layer listening={false}>
                 <VaseNode vase={selectedVase} canvasW={CANVAS_W} canvasH={CANVAS_H} />
               </Layer>
-              {/* Plants layer */}
               <Layer>
                 {items.map((item) => {
                   const plant = PLANTS.find((p) => p.id === item.plantId);
                   if (!plant) return null;
                   return (
-                    <PlantNode
-                      key={item.id}
-                      item={item}
-                      plant={plant}
+                    <PlantNode key={item.id} item={item} plant={plant}
                       isSelected={selectedId === item.id}
-                      onSelect={setSelectedId}
-                      onChange={updateItem}
-                    />
+                      onSelect={setSelectedId} onChange={updateItem} />
                   );
                 })}
               </Layer>
@@ -575,254 +791,181 @@ export default function FlorAI() {
         </div>
 
         {/* Right panel */}
-        <div
-          style={{
-            width: '220px',
-            flexShrink: 0,
-            borderLeft: '1px solid rgba(74,122,74,0.3)',
-            background: '#162416',
-            padding: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
-          }}
-        >
+        <div style={{
+          width: '220px', flexShrink: 0,
+          borderLeft: '1px solid rgba(74,122,74,0.3)',
+          background: '#162416', padding: '16px',
+          display: 'flex', flexDirection: 'column', gap: '20px',
+        }}>
           {selectedItem && selectedPlant ? (
             <>
-              {/* Selected plant info */}
               <div>
                 <div style={labelStyle}>Selecionado</div>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#f5f0e8', marginBottom: '2px' }}>
-                  {selectedPlant.name}
-                </div>
-                <div style={{ fontSize: '10px', color: 'rgba(245,240,232,0.4)', fontStyle: 'italic' }}>
-                  {selectedPlant.scientific}
-                </div>
-                <div
-                  style={{
-                    display: 'inline-block',
-                    marginTop: '6px',
-                    padding: '2px 7px',
-                    borderRadius: '2px',
-                    background: 'rgba(74,122,74,0.2)',
-                    border: '1px solid rgba(74,122,74,0.3)',
-                    fontSize: '9px',
-                    color: '#4a7a4a',
-                    letterSpacing: '0.05em',
-                  }}
-                >
+                <div style={{ fontSize: '13px', fontWeight: 600, color: '#f5f0e8', marginBottom: '2px' }}>{selectedPlant.name}</div>
+                <div style={{ fontSize: '10px', color: 'rgba(245,240,232,0.4)', fontStyle: 'italic' }}>{selectedPlant.scientific}</div>
+                <div style={{ display: 'inline-block', marginTop: '6px', padding: '2px 7px', borderRadius: '2px', background: 'rgba(74,122,74,0.2)', border: '1px solid rgba(74,122,74,0.3)', fontSize: '9px', color: '#4a7a4a', letterSpacing: '0.05em' }}>
                   {BIOMA_LABELS[selectedPlant.bioma] ?? selectedPlant.bioma}
                 </div>
               </div>
-
-              {/* Scale */}
               <div>
                 <div style={labelStyle}>Escala</div>
-                <input
-                  type="range"
-                  min="0.2"
-                  max="3"
-                  step="0.05"
-                  value={selectedItem.scaleX}
-                  onChange={(e) => {
-                    const s = parseFloat(e.target.value);
-                    updateItem(selectedItem.id, { scaleX: s, scaleY: s });
-                  }}
-                  style={rangeStyle}
-                />
+                <input type="range" min="0.2" max="3" step="0.05" value={selectedItem.scaleX} style={rangeStyle}
+                  onChange={(e) => { const s = parseFloat(e.target.value); updateItem(selectedItem.id, { scaleX: s, scaleY: s }); }} />
                 <div style={valueStyle}>{(selectedItem.scaleX * 100).toFixed(0)}%</div>
               </div>
-
-              {/* Rotation */}
               <div>
                 <div style={labelStyle}>Rotação</div>
-                <input
-                  type="range"
-                  min="-180"
-                  max="180"
-                  step="1"
-                  value={selectedItem.rotation}
-                  onChange={(e) => {
-                    updateItem(selectedItem.id, { rotation: parseFloat(e.target.value) });
-                  }}
-                  style={rangeStyle}
-                />
+                <input type="range" min="-180" max="180" step="1" value={selectedItem.rotation} style={rangeStyle}
+                  onChange={(e) => updateItem(selectedItem.id, { rotation: parseFloat(e.target.value) })} />
                 <div style={valueStyle}>{selectedItem.rotation.toFixed(0)}°</div>
               </div>
-
-              {/* Opacity */}
               <div>
                 <div style={labelStyle}>Opacidade</div>
-                <input
-                  type="range"
-                  min="0.1"
-                  max="1"
-                  step="0.05"
-                  value={selectedItem.opacity}
-                  onChange={(e) => {
-                    updateItem(selectedItem.id, { opacity: parseFloat(e.target.value) });
-                  }}
-                  style={rangeStyle}
-                />
+                <input type="range" min="0.1" max="1" step="0.05" value={selectedItem.opacity} style={rangeStyle}
+                  onChange={(e) => updateItem(selectedItem.id, { opacity: parseFloat(e.target.value) })} />
                 <div style={valueStyle}>{(selectedItem.opacity * 100).toFixed(0)}%</div>
               </div>
-
-              {/* Layer controls */}
               <div>
                 <div style={labelStyle}>Camada</div>
                 <div style={{ display: 'flex', gap: '6px' }}>
-                  <button
-                    onClick={() => moveLayer('up')}
-                    title="Trazer para frente"
-                    style={controlBtnStyle}
-                  >
-                    <IconUp />
-                    Frente
-                  </button>
-                  <button
-                    onClick={() => moveLayer('down')}
-                    title="Enviar para trás"
-                    style={controlBtnStyle}
-                  >
-                    <IconDown />
-                    Trás
-                  </button>
+                  <button onClick={() => moveLayer('up')} title="Trazer para frente" style={controlBtnStyle}><IconUp /> Frente</button>
+                  <button onClick={() => moveLayer('down')} title="Enviar para trás" style={controlBtnStyle}><IconDown /> Trás</button>
                 </div>
               </div>
-
-              {/* Delete */}
               <div style={{ marginTop: 'auto' }}>
-                <button
-                  onClick={deleteSelected}
-                  style={{
-                    ...controlBtnStyle,
-                    width: '100%',
-                    justifyContent: 'center',
-                    borderColor: 'rgba(220,38,38,0.4)',
-                    color: '#ef4444',
-                    background: 'rgba(220,38,38,0.08)',
-                  }}
-                >
-                  <IconTrash />
-                  Remover
+                <button onClick={deleteSelected} style={{ ...controlBtnStyle, width: '100%', justifyContent: 'center', borderColor: 'rgba(220,38,38,0.4)', color: '#ef4444', background: 'rgba(220,38,38,0.08)' }}>
+                  <IconTrash /> Remover
                 </button>
               </div>
             </>
           ) : (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '100%',
-                gap: '12px',
-                color: 'rgba(245,240,232,0.25)',
-                textAlign: 'center',
-                padding: '20px',
-              }}
-            >
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '12px', color: 'rgba(245,240,232,0.25)', textAlign: 'center', padding: '20px' }}>
               <svg width="36" height="36" fill="none" stroke="currentColor" strokeWidth="1.2" viewBox="0 0 24 24" opacity="0.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59"/>
               </svg>
-              <div style={{ fontSize: '12px', lineHeight: '1.5' }}>
-                Clique em uma planta para adicioná-la ao arranjo
-              </div>
-              <div style={{ fontSize: '10px', opacity: 0.6, lineHeight: '1.4' }}>
-                Selecione um elemento no canvas para editar
-              </div>
+              <div style={{ fontSize: '12px', lineHeight: '1.5' }}>Clique em uma planta para adicioná-la ao arranjo</div>
+              <div style={{ fontSize: '10px', opacity: 0.6, lineHeight: '1.4' }}>Selecione um elemento no canvas para editar</div>
             </div>
           )}
         </div>
       </div>
 
       {/* Bottom info bar */}
-      <div
-        style={{
-          height: '32px',
-          borderTop: '1px solid rgba(74,122,74,0.2)',
-          background: '#0d1a0d',
-          display: 'flex',
-          alignItems: 'center',
-          padding: '0 20px',
-          gap: '24px',
-          flexShrink: 0,
-        }}
-      >
+      <div style={{
+        height: '32px', borderTop: '1px solid rgba(74,122,74,0.2)',
+        background: '#0d1a0d', display: 'flex', alignItems: 'center',
+        padding: '0 20px', gap: '24px', flexShrink: 0,
+      }}>
         {hoveredPlant ? (
           <>
-            <span style={{ fontSize: '11px', color: '#c45c2a', fontWeight: 500 }}>
-              {hoveredPlant.name}
-            </span>
-            <span style={{ fontSize: '10px', color: 'rgba(245,240,232,0.35)', fontStyle: 'italic' }}>
-              {hoveredPlant.scientific}
-            </span>
-            <span style={{ fontSize: '10px', color: 'rgba(74,122,74,0.8)' }}>
-              {BIOMA_LABELS[hoveredPlant.bioma]}
-            </span>
+            <span style={{ fontSize: '11px', color: '#c45c2a', fontWeight: 500 }}>{hoveredPlant.name}</span>
+            <span style={{ fontSize: '10px', color: 'rgba(245,240,232,0.35)', fontStyle: 'italic' }}>{hoveredPlant.scientific}</span>
+            <span style={{ fontSize: '10px', color: 'rgba(74,122,74,0.8)' }}>{BIOMA_LABELS[hoveredPlant.bioma]}</span>
           </>
         ) : (
           <span style={{ fontSize: '10px', color: 'rgba(245,240,232,0.2)' }}>
             {items.length} {items.length === 1 ? 'elemento' : 'elementos'} no arranjo
-            {selectedId ? ' · Tecla Delete remove o selecionado' : ''}
+            {selectedId ? ' · Delete remove o selecionado' : ''}
+            {items.length === 0 ? ' · Clique em uma planta à esquerda para começar' : ''}
           </span>
         )}
       </div>
+
+      {/* ── Modals ── */}
+      {showImageModal && (
+        <ImageModal
+          imageUrl={generatedImageUrl}
+          isLoading={isGeneratingImage}
+          error={imageError}
+          onClose={() => setShowImageModal(false)}
+          onOpenCard={(url) => {
+            setCardImageUrl(url);
+            setShowImageModal(false);
+            setShowCardModal(true);
+          }}
+        />
+      )}
+      {showCardModal && (
+        <CardModal
+          imageUrl={cardImageUrl}
+          arrangementDescription={arrangementDescription()}
+          onClose={() => setShowCardModal(false)}
+        />
+      )}
     </div>
   );
 }
 
-// ─── Style helpers ────────────────────────────────────────────────────────────
+// ─── Style constants ──────────────────────────────────────────────────────────
+
+const microLabel: React.CSSProperties = {
+  fontSize: '9px', letterSpacing: '0.15em', color: 'rgba(245,240,232,0.4)',
+  textTransform: 'uppercase', marginBottom: '8px',
+};
 
 const labelStyle: React.CSSProperties = {
-  fontSize: '9px',
-  letterSpacing: '0.12em',
-  textTransform: 'uppercase',
-  color: 'rgba(245,240,232,0.35)',
-  marginBottom: '6px',
+  fontSize: '9px', letterSpacing: '0.12em', textTransform: 'uppercase',
+  color: 'rgba(245,240,232,0.35)', marginBottom: '6px',
 };
 
 const valueStyle: React.CSSProperties = {
-  fontSize: '10px',
-  color: 'rgba(245,240,232,0.5)',
-  marginTop: '3px',
+  fontSize: '10px', color: 'rgba(245,240,232,0.5)', marginTop: '3px',
   fontVariantNumeric: 'tabular-nums',
 };
 
-const rangeStyle: React.CSSProperties = {
-  width: '100%',
-  accentColor: '#c45c2a',
-  cursor: 'pointer',
-};
+const rangeStyle: React.CSSProperties = { width: '100%', accentColor: '#c45c2a', cursor: 'pointer' };
 
 const controlBtnStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '4px',
-  padding: '5px 10px',
-  border: '1px solid rgba(74,122,74,0.35)',
-  borderRadius: '4px',
-  background: 'transparent',
-  color: 'rgba(245,240,232,0.65)',
-  fontSize: '11px',
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  transition: 'all 0.15s',
+  display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '5px 10px',
+  border: '1px solid rgba(74,122,74,0.35)', borderRadius: '4px', background: 'transparent',
+  color: 'rgba(245,240,232,0.65)', fontSize: '11px', cursor: 'pointer', fontFamily: 'inherit',
 };
 
-function topBtnStyle(hoverBg: string, bg: string): React.CSSProperties {
+function topBtnStyle(border: string, bg: string): React.CSSProperties {
   return {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '6px',
-    padding: '6px 14px',
-    border: `1px solid ${hoverBg}55`,
-    borderRadius: '4px',
-    background: `${bg}33`,
-    color: 'rgba(245,240,232,0.8)',
-    fontSize: '12px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    transition: 'all 0.15s',
+    display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px',
+    border: `1px solid ${border}55`, borderRadius: '4px', background: `${bg}33`,
+    color: 'rgba(245,240,232,0.85)', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit',
   };
 }
+
+const overlayStyle: React.CSSProperties = {
+  position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)',
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  zIndex: 1000, padding: '20px',
+};
+
+const modalStyle: React.CSSProperties = {
+  background: '#162416', border: '1px solid rgba(74,122,74,0.4)',
+  borderRadius: '12px', padding: '28px', boxShadow: '0 24px 60px rgba(0,0,0,0.6)',
+  color: '#f5f0e8', fontFamily: "'DM Sans', system-ui, sans-serif",
+  maxHeight: '90vh', overflowY: 'auto',
+};
+
+const iconBtnStyle: React.CSSProperties = {
+  background: 'transparent', border: 'none', color: 'rgba(245,240,232,0.5)',
+  cursor: 'pointer', padding: '4px', borderRadius: '4px', display: 'flex',
+};
+
+const primaryBtnStyle: React.CSSProperties = {
+  display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 18px',
+  background: '#c45c2a', border: '1px solid #d97050', borderRadius: '5px',
+  color: '#f5f0e8', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 600,
+};
+
+const secondaryBtnStyle: React.CSSProperties = {
+  display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 14px',
+  background: 'transparent', border: '1px solid rgba(74,122,74,0.5)', borderRadius: '5px',
+  color: 'rgba(245,240,232,0.7)', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit',
+};
+
+const fieldLabelStyle: React.CSSProperties = {
+  display: 'block', fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase',
+  color: 'rgba(245,240,232,0.4)', marginBottom: '6px',
+};
+
+const inputStyle: React.CSSProperties = {
+  width: '100%', background: '#0d1a0d', border: '1px solid rgba(74,122,74,0.35)',
+  borderRadius: '5px', padding: '8px 12px', color: '#f5f0e8', fontSize: '13px',
+  fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box',
+};
