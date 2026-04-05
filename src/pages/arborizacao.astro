@@ -1,10 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
-
-// Load GeoJSON data at build time
 import fs from 'fs';
 import path from 'path';
 
+const base = import.meta.env.BASE_URL;
 const geojsonPath = path.join(process.cwd(), 'public', 'data', 'vias-arborizadas.geojson');
 const geojson = JSON.parse(fs.readFileSync(geojsonPath, 'utf-8'));
 
@@ -128,7 +127,7 @@ const viaTypeSummary = Array.from(viaTypeMap.entries())
            class="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-floresta-700/80 hover:bg-floresta-600 text-pergaminho-100 text-sm font-mono border border-floresta-600/50 transition-all">
           📥 GeoJSON (15.566 mudas)
         </a>
-        <a href="/planejamento"
+        <a href={`${base}planejamento`}
            class="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-terracota-700/60 hover:bg-terracota-600 text-pergaminho-100 text-sm font-mono border border-terracota-600/50 transition-all">
           📄 Relatório PMAU Completo
         </a>
