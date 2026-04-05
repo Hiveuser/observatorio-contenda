@@ -1,0 +1,634 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Load GeoJSON data at build time
+import fs from 'fs';
+import path from 'path';
+
+const geojsonPath = path.join(process.cwd(), 'public', 'data', 'vias-arborizadas.geojson');
+const geojson = JSON.parse(fs.readFileSync(geojsonPath, 'utf-8'));
+
+interface StreetSpecies {
+  nome: string;
+  species: string;
+  nome_cientifico: string;
+  porte: string;
+  floracao: string;
+  mudas: number;
+  custo: number;
+  tipo_via: string;
+  comprimento_m: number;
+}
+
+const streets: StreetSpecies[] = geojson.features
+  .filter((f: any) => f.properties.arborizacao && f.properties.nome)
+  .map((f: any) => {
+    const p = f.properties;
+    const a = p.arborizacao;
+    return {
+      nome: p.nome || 'Sem nome',
+      species: a?.especie_primaria || '—',
+      nome_cientifico: a?.nome_cientifico || '—',
+      porte: a?.porte || '—',
+      floracao: a?.floracao || '—',
+      mudas: a?.mudas_necessarias || 0,
+      custo: a?.custo_estimado_mudas || 0,
+      tipo_via: p.tipo || 'Não classificada',
+      comprimento_m: p.comprimento_m || 0,
+    };
+  })
+  .filter((s) => s.mudas > 0); // only streets with actual arborization data
+
+const totalStreets = streets.length;
+const totalMudas = streets.reduce((sum, s) => sum + s.mudas, 0);
+const totalCusto = streets.reduce((sum, s) => sum + s.custo, 0);
+
+// Species summary
+const speciesMap = new Map<string, { count: number; mudas: number; custo: number; floracao: string }>();
+streets.forEach((s) => {
+  const existing = speciesMap.get(s.species) || { count: 0, mudas: 0, custo: 0, floracao: s.floracao };
+  existing.count++;
+  existing.mudas += s.mudas;
+  existing.custo += s.custo;
+  speciesMap.set(s.species, existing);
+});
+
+const speciesSummary = Array.from(speciesMap.entries())
+  .sort((a, b) => b[1].mudas - a[1].mudas)
+  .map(([name, data]) => ({ name, ...data }));
+
+// Via type summary
+const viaTypeMap = new Map<string, { count: number; length: number }>();
+streets.forEach((s) => {
+  const existing = viaTypeMap.get(s.tipo_via) || { count: 0, length: 0 };
+  existing.count++;
+  existing.length += s.comprimento_m;
+  viaTypeMap.set(s.tipo_via, existing);
+});
+
+const viaTypeSummary = Array.from(viaTypeMap.entries())
+  .sort((a, b) => b[1].length - a[1].length)
+  .map(([name, data]) => ({ name, ...data }));
+---
+
+<Base
+  title="Plano de Arborização Viária"
+  description="Plano de arborização viária georreferenciado para Contenda/PR — 165 vias, 15.566 mudas nativas de Mata Atlântica."
+>
+
+  <!-- PAGE HERO -->
+  <section class="pt-20 pb-16 px-6 max-w-7xl mx-auto">
+    <div class="mb-12">
+      <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-3">Planejamento · Arborização Urbana</p>
+      <h1 class="font-display font-black text-5xl md:text-6xl text-pergaminho-100 leading-tight mb-4">
+        Plano de<br/>
+        <span class="italic font-normal text-floresta-500">Arborização Viária</span>
+      </h1>
+      <p class="font-body text-lg text-pergaminho-200/60 max-w-2xl leading-relaxed">
+        Plano municipal de arborização urbana georreferenciado para Contenda/PR.
+        {totalStreets} vias mapeadas, {totalMudas.toLocaleString('pt-BR')} mudas nativas de Mata Atlântica previstas.
+      </p>
+    </div>
+    <div class="divider"></div>
+  </section>
+
+  <!-- MAPA INTERATIVO -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Mapa Interativo
+    </h2>
+
+    <div data-animate id="arborizacao-map" class="rounded-sm overflow-hidden" style="height: 600px; z-index: 1;"></div>
+
+    <div data-animate class="mt-4 flex flex-wrap gap-3">
+      <span class="font-mono text-xs text-pergaminho-200/60 px-3 py-1 border border-floresta-700/40 rounded-sm">
+        Cobre cada rua com a espécie recomendada
+      </span>
+      <span class="font-mono text-xs text-floresta-500 px-3 py-1">
+        Clique em uma via para detalhes
+      </span>
+      <a href="/data/vias-arborizadas.geojson" download
+         class="font-mono text-xs bg-floresta-700 hover:bg-floresta-600 text-pergaminho-100 px-3 py-1 rounded-sm border border-floresta-600 transition-colors flex items-center gap-1">
+        ↓ Baixar GeoJSON
+      </a>
+      <a href="/data/vias-contenda.geojson" download
+         class="font-mono text-xs bg-floresta-700/60 hover:bg-floresta-600/60 text-pergaminho-200 px-3 py-1 rounded-sm border border-floresta-700/40 transition-colors flex items-center gap-1">
+        ↓ Baixar Vias Brutas
+      </a>
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+    <!-- DOWNLOADS -->
+    <section class="py-6 px-6 max-w-7xl mx-auto">
+      <div class="flex flex-wrap gap-3 items-center">
+        <a href="/data/vias-arborizadas.geojson" download
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-floresta-700/80 hover:bg-floresta-600 text-pergaminho-100 text-sm font-mono border border-floresta-600/50 transition-all">
+          📥 GeoJSON (15.566 mudas)
+        </a>
+        <a href="/planejamento"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-terracota-700/60 hover:bg-terracota-600 text-pergaminho-100 text-sm font-mono border border-terracota-600/50 transition-all">
+          📄 Relatório PMAU Completo
+        </a>
+      </div>
+    </section>
+
+    <!-- KPI CARDS -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Números do Plano
+    </h2>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {
+        [
+          { label: 'Vias mapeadas', value: totalStreets.toString(), sub: '107+ km de vias', color: 'text-floresta-500' },
+          { label: 'Mudas previstas', value: totalMudas.toLocaleString('pt-BR'), sub: '9 espécies nativas', color: 'text-dado-verde' },
+          { label: 'Custo plantio', value: `R$ ${(totalCusto / 1000).toFixed(0)}k`, sub: `R$ ${(totalCusto * 1.3 / 1000).toFixed(0)}k com manutenção`, color: 'text-terracota-400' },
+          { label: 'Espécies', value: speciesSummary.length.toString(), sub: 'Mata Atlântica/PR', color: 'text-pergaminho-100' },
+        ].map((item, i) => (
+          <div data-animate class="indicador-card rounded-sm p-6" style={`animation-delay:${i * 0.08}s`}>
+            <p class={`font-display font-bold text-3xl mb-2 ${item.color}`}>{item.value}</p>
+            <p class="font-data text-sm font-medium text-pergaminho-100 mb-1">{item.label}</p>
+            <p class="font-body text-xs text-pergaminho-200/50">{item.sub}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- ESPÉCIES -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Espécies Recomendadas
+    </h2>
+
+    <div data-animate class="overflow-x-auto">
+      <table class="data-table w-full">
+        <thead>
+          <tr>
+            <th class="text-left">#</th>
+            <th class="text-left">Espécie</th>
+            <th class="text-left">Nome Científico</th>
+            <th class="text-left">Floração</th>
+            <th class="text-center">Vias</th>
+            <th class="text-center">Mudas</th>
+            <th class="text-right">Custo</th>
+          </tr>
+        </thead>
+        <tbody>
+          {speciesSummary.map((sp, i) => (
+            <tr>
+              <td class="font-mono text-xs text-floresta-600">{String(i + 1).padStart(2, '0')}</td>
+              <td class="font-body text-sm text-pergaminho-100">{sp.name}</td>
+              <td class="font-body text-xs italic text-floresta-400">{sp.nome_cientifico || '—'}</td>
+              <td class="font-data text-xs text-pergaminho-200/60">{sp.floracao}</td>
+              <td class="text-center font-mono text-xs">{sp.count}</td>
+              <td class="text-center font-mono text-xs">{sp.mudas.toLocaleString('pt-BR')}</td>
+              <td class="text-right font-mono text-xs text-dado-verde">R$ {sp.custo.toLocaleString('pt-BR')}</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr class="border-t border-floresta-700/40">
+            <td colSpan={4} class="font-data text-xs text-floresta-500 uppercase tracking-wider">Total</td>
+            <td class="text-center font-mono text-xs text-pergaminho-100">{totalStreets}</td>
+            <td class="text-center font-mono text-xs text-pergaminho-100">{totalMudas.toLocaleString('pt-BR')}</td>
+            <td class="text-right font-mono text-xs text-dado-verde">R$ {totalCusto.toLocaleString('pt-BR')}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- VIAS POR TIPO -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Vias por Tipo
+    </h2>
+
+    <div data-animate class="overflow-x-auto">
+      <table class="data-table w-full">
+        <thead>
+          <tr>
+            <th class="text-left">Tipo de Via</th>
+            <th class="text-center">Qtd</th>
+            <th class="text-right">Extensão (km)</th>
+            <th class="text-center">% Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {(() => {
+            const totalLen = viaTypeSummary.reduce((s, v) => s + v.length, 0);
+            return viaTypeSummary.map((vt) => ({
+              ...vt,
+              km: (vt.length / 1000).toFixed(1),
+              pct: ((vt.length / totalLen) * 100).toFixed(0),
+            }));
+          })().map((vt) => (
+            <tr>
+              <td class="font-body text-sm text-pergaminho-100">{vt.name}</td>
+              <td class="text-center font-mono text-xs">{vt.count}</td>
+              <td class="text-right font-mono text-xs">{vt.km}</td>
+              <td class="text-center font-mono text-xs text-floresta-500">{vt.pct}%</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- TOP 10 VIAS -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Top 10 Vias por Extensão
+    </h2>
+
+    <div data-animate class="overflow-x-auto">
+      <table class="data-table w-full">
+        <thead>
+          <tr>
+            <th class="text-left">#</th>
+            <th class="text-left">Rua</th>
+            <th class="text-left">Espécie</th>
+            <th class="text-left">Porte</th>
+            <th class="text-center">Extensão</th>
+            <th class="text-center">Mudas</th>
+            <th class="text-right">Custo</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[...streets]
+            .sort((a, b) => b.comprimento_m - a.comprimento_m)
+            .slice(0, 10)
+            .map((s, i) => (
+              <tr>
+                <td class="font-mono text-xs text-floresta-600">{String(i + 1).padStart(2, '0')}</td>
+                <td class="font-body text-sm text-pergaminho-100">{s.nome}</td>
+                <td class="font-body text-xs text-terracota-400">{s.species}</td>
+                <td class="font-data text-xs text-pergaminho-200/50">{s.porte}</td>
+                <td class="text-center font-mono text-xs">{(s.comprimento_m / 1000).toFixed(1)} km</td>
+                <td class="text-center font-mono text-xs">{s.mudas.toLocaleString('pt-BR')}</td>
+                <td class="text-right font-mono text-xs text-dado-verde">R$ {s.custo.toLocaleString('pt-BR')}</td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- LEGISLAÇÃO POR ESPÉCIE -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Espécies & Base Legal
+    </h2>
+
+    <div data-animate class="overflow-x-auto">
+      <table class="data-table w-full">
+        <thead>
+          <tr>
+            <th class="text-left">Espécie</th>
+            <th class="text-left">Porte</th>
+            <th class="text-left">Base Legal / Norma</th>
+            <th class="text-left">Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-body text-sm text-pergaminho-100">Ipê-amarelo-miúdo</td>
+            <td class="font-data text-xs text-pergaminho-200/60">Medio (6-12m)</td>
+            <td class="font-body text-xs text-pergaminho-200/70">IN 35/2019 MMA — Flora ameaçada; Lista Espécies Nativas PR</td>
+            <td><a href="https://www.gov.br/mma" target="_blank" class="text-floresta-400 hover:text-terracota-400 text-xs">MMA ↗</a></td>
+          </tr>
+          <tr>
+            <td class="font-body text-sm text-pergaminho-100">Erva-mate</td>
+            <td class="font-data text-xs text-pergaminho-200/60">Medio (6-12m)</td>
+            <td class="font-body text-xs text-pergaminho-200/70">IAT-PR — Instrução Normativa 01/2016; Resolução CONAMA 423/2010</td>
+            <td><a href="https://www.iat.pr.gov.br" target="_blank" class="text-floresta-400 hover:text-terracota-400 text-xs">IAT-PR ↗</a></td>
+          </tr>
+          <tr>
+            <td class="font-body text-sm text-pergaminho-100">Goiaba-serrana</td>
+            <td class="font-data text-xs text-pergaminho-200/60">Pequeno (<6m)</td>
+            <td class="font-body text-xs text-pergaminho-200/70">Lista Flora Ameaçada RS; EMBRAPA Clima Temperado</td>
+            <td><a href="https://www.embrapa.br/clima-temperado" target="_blank" class="text-floresta-400 hover:text-terracota-400 text-xs">EMBRAPA ↗</a></td>
+          </tr>
+          <tr>
+            <td class="font-body text-sm text-pergaminho-100">Quaresmeira-da-serra</td>
+            <td class="font-data text-xs text-pergaminho-200/60">Pequeno (<6m)</td>
+            <td class="font-body text-xs text-pergaminho-200/70">Flora do Brasil 2020 — JBRJ; IN 06/2008 MMA</td>
+            <td><a href="https://floradobrasil.jbrj.gov.br" target="_blank" class="text-floresta-400 hover:text-terracota-400 text-xs">Flora Brasil ↗</a></td>
+          </tr>
+          <tr>
+            <td class="font-body text-sm text-pergaminho-100">Pitanga</td>
+            <td class="font-data text-xs text-pergaminho-200/60">Pequeno (<6m)</td>
+            <td class="font-body text-xs text-pergaminho-200/70">Lista Espécies Nativas PR (IAT); EMBRAPA Semiárido</td>
+            <td><a href="https://www.iat.pr.gov.br" target="_blank" class="text-floresta-400 hover:text-terracota-400 text-xs">IAT-PR ↗</a></td>
+          </tr>
+          <tr>
+            <td class="font-body text-sm text-pergaminho-100">Topete-de-cardeal</td>
+            <td class="font-data text-xs text-pergaminho-200/60">Pequeno (<6m)</td>
+            <td class="font-body text-xs text-pergaminho-200/70">IN 06/2008 MMA; Lista Oficial Espécies Flora Brasileira Ameaçada</td>
+            <td><a href="https://www.gov.br/mma" target="_blank" class="text-floresta-400 hover:text-terracota-400 text-xs">MMA ↗</a></td>
+          </tr>
+          <tr>
+            <td class="font-body text-sm text-pergaminho-100">Ipê-amarelo-da-serra</td>
+            <td class="font-data text-xs text-pergaminho-200/60">Grande (>12m)</td>
+            <td class="font-body text-xs text-pergaminho-200/70">IN 35/2019 MMA; Decreto 42.574/SP — proteção especial</td>
+            <td><a href="https://www.gov.br/mma" target="_blank" class="text-floresta-400 hover:text-terracota-400 text-xs">MMA ↗</a></td>
+          </tr>
+          <tr>
+            <td class="font-body text-sm text-pergaminho-100">Pessegueiro-bravo</td>
+            <td class="font-data text-xs text-pergaminho-200/60">Medio (6-12m)</td>
+            <td class="font-body text-xs text-pergaminho-200/70">Flora do Brasil 2020; IN 06/2008 MMA</td>
+            <td><a href="https://floradobrasil.jbrj.gov.br" target="_blank" class="text-floresta-400 hover:text-terracota-400 text-xs">Flora Brasil ↗</a></td>
+          </tr>
+          <tr>
+            <td class="font-body text-sm text-pergaminho-100">Aroeira-pimenteira</td>
+            <td class="font-data text-xs text-pergaminho-200/60">Medio (6-12m)</td>
+            <td class="font-body text-xs text-pergaminho-200/70">Lista Espécies Nativas PR (IAT); RESEX — uso sustentável</td>
+            <td><a href="https://www.iat.pr.gov.br" target="_blank" class="text-floresta-400 hover:text-terracota-400 text-xs">IAT-PR ↗</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 text-xs text-floresta-500">
+      ⚠ Pitanga e Aroeira-pimenteira: tolerância a geadas severas limitada em vias expostas (ver nota técnica).
+    </p>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- MAPBIOMAS — DÉFICIT DE ARBORIZAÇÃO -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Déficit de Arborização vs MapBioms
+    </h2>
+
+    <div class="grid md:grid-cols-3 gap-4 mb-8">
+      <div data-animate class="indicador-card rounded-sm p-6 border-l-2 border-floresta-500/40">
+        <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-3">Cobertura Florestal Total</p>
+        <p class="font-display font-bold text-3xl text-floresta-500 mb-1">~53%</p>
+        <p class="font-body text-xs text-pergaminho-200/60">~167 km² (Form. Florestal + Savânica)</p>
+        <p class="font-mono text-xs text-floresta-600 mt-2">Fonte: MapBioms Coleção 8.0</p>
+      </div>
+      <div data-animate class="indicador-card rounded-sm p-6 border-l-2 border-terracota-400/40">
+        <p class="font-data text-xs tracking-widest uppercase text-terracota-400/70 mb-3">Área Urbana Estimada</p>
+        <p class="font-display font-bold text-3xl text-terracota-400 mb-1">~1.8%</p>
+        <p class="font-body text-xs text-pergaminho-200/60">~5.7 km²</p>
+        <p class="font-mono text-xs text-floresta-600 mt-2">Fonte: MapBioms C8 est.</p>
+      </div>
+      <div data-animate class="indicador-card rounded-sm p-6 border-l-2 border-dado-verde/40">
+        <p class="font-data text-xs tracking-widest uppercase text-dado-verde/70 mb-3">Déficit Arb. Urbano Est.</p>
+        <p class="font-display font-bold text-3xl text-dado-verde mb-1">0.44–1.02 km²</p>
+        <p class="font-body text-xs text-pergaminho-200/60">~8–18% da superfície urbana</p>
+        <p class="font-mono text-xs text-floresta-600 mt-2">Cálculo: plano 15.566 mudas</p>
+      </div>
+    </div>
+
+    <div data-animate class="overflow-x-auto">
+      <table class="data-table w-full">
+        <thead>
+          <tr>
+            <th class="text-left">Uso do Solo</th>
+            <th class="text-center">%</th>
+            <th class="text-right">Área (km²)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="font-body text-sm text-floresta-400">Formação Florestal</td><td class="text-center font-mono text-xs">48.1%</td><td class="text-right font-mono text-xs">~151.0</td></tr>
+          <tr><td class="font-body text-sm text-floresta-400">Formação Savânica</td><td class="text-center font-mono text-xs">0.3%</td><td class="text-right font-mono text-xs">~0.9</td></tr>
+          <tr><td class="font-body text-sm text-pergaminho-200/70">Agricultura</td><td class="text-center font-mono text-xs">18.5%</td><td class="text-right font-mono text-xs">~58.1</td></tr>
+          <tr><td class="font-body text-sm text-pergaminho-200/70">Pastagem</td><td class="text-center font-mono text-xs">20.1%</td><td class="text-right font-mono text-xs">~63.1</td></tr>
+          <tr><td class="font-body text-sm text-terracota-400">Área Urbana</td><td class="text-center font-mono text-xs">1.8%</td><td class="text-right font-mono text-xs">~5.7</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 text-xs text-floresta-600">
+      Contenda está na transição Floresta Ombrófila Mista ↔ Densa (Mata Atlântica).
+      Déficit calculado: meta 15.566 mudas × ~120 m²/copa = ~1.87 km² cobertura adicional — atual est. 0.85-1.43 km².
+      <a href="https://brasil.mapbiomas.org/download/mapbiomas-colecao-8/" target="_blank" class="text-floresta-400 hover:text-terracota-400">MapBioms C8 ↗</a>
+    </p>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- JUSTIFICATIVA TÉCNICA -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Fundamentação Técnica
+    </h2>
+
+    <div class="grid md:grid-cols-2 gap-8">
+      <div data-animate>
+        <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-4">Critérios de seleção</p>
+        <ul class="space-y-2">
+          {
+            [
+              'Espécies nativas de Mata Atlântica/PR (Lei 11.428/2006)',
+              'Porte compatível com calçadas urbanas (4–15m)',
+              'Tolerância a geadas (mínimo 4/5) — clima Cfb',
+              'Compatibilidade com rede COPEL (porte médio sob fiação)',
+              'Sistema radicular não agressivo a calçadas e tubulações',
+              'Floração ornamental para valorização paisagística',
+              'Adaptabilidade a solos LVA e PV (dominantes no município)',
+            ].map((item) => (
+              <li class="flex gap-3 items-start">
+                <span class="text-floresta-600 mt-0.5 flex-shrink-0">·</span>
+                <span class="font-body text-sm text-pergaminho-200/70">{item}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div data-animate>
+        <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-4">Referências técnicas</p>
+        <div class="grid grid-cols-1 gap-2">
+          {
+            [
+              { nome: 'EMBRAPA Florestas', url: 'https://www.embrapa.br/florestas/' },
+              { nome: 'IAT-PR · Zoneamento', url: 'https://www.iat.pr.gov.br/' },
+              { nome: 'Manual Arborização (MP/PR)', url: 'https://www.mppr.mp.br/' },
+              { nome: 'Lei 11.428/2006 (Mata Atlântica)', url: 'https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2006/lei/l11428.htm' },
+              { nome: 'Lei 12.651/2012 (Código Florestal)', url: 'https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2012/lei/l12651.htm' },
+              { nome: 'Resolução CONAMA 357', url: 'https://www.gov.br/mme/pt-br/assuntos/secretarias/geologia-mineracao-e-transformacao-mineral/conselho-nacional-do-meio-ambiente-conama' },
+            ].map((ref) => (
+              <a href={ref.url} target="_blank" rel="noopener"
+                 class="font-mono text-xs text-pergaminho-200/60 hover:text-terracota-400 transition-colors border border-floresta-800/40 rounded-sm px-3 py-2 block">
+                {ref.nome} ↗
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider mx-6 md:mx-16"></div>
+
+  <!-- ORÇAMENTO -->
+  <section class="py-12 px-6 max-w-7xl mx-auto">
+    <h2 data-animate class="font-display text-2xl font-bold text-pergaminho-100 mb-8 flex items-center gap-3">
+      <span class="w-8 h-px bg-floresta-600 inline-block"></span>
+      Orçamento Estimado
+    </h2>
+
+    <div data-animate class="grid md:grid-cols-2 gap-6">
+      <div class="indicador-card rounded-sm p-6 border-l-2 border-dado-verde/40">
+        <p class="font-data text-xs tracking-widest uppercase text-dado-verde/70 mb-3">Plantio</p>
+        <p class="font-display font-bold text-3xl text-dado-verde mb-2">R$ {(totalCusto / 1000).toFixed(0)} mil</p>
+        <p class="font-body text-sm text-pergaminho-200/60">Aquisição de mudas e plantio em {totalStreets} vias urbanas</p>
+      </div>
+
+      <div class="indicador-card rounded-sm p-6 border-l-2 border-terracota-400/40">
+        <p class="font-data text-xs tracking-widest uppercase text-terracota-400/70 mb-3">5 anos (c/ manutenção)</p>
+        <p class="font-display font-bold text-3xl text-terracota-400 mb-2">R$ {(totalCusto / 1000 * 1.3).toFixed(0)} mil</p>
+        <p class="font-body text-sm text-pergaminho-200/60">Inclui irrigação, tutoramento, podas de formação e reposição</p>
+      </div>
+    </div>
+
+    <div data-animate class="mt-6 indicador-card rounded-sm p-6 border-l-2 border-floresta-500/40">
+      <p class="font-data text-xs tracking-widest uppercase text-floresta-500 mb-3">Parceria COPEL</p>
+      <p class="font-body text-sm text-pergaminho-200/70 leading-relaxed">
+        O custo de podas sob rede elétrica pode ser reduzido em até 60% com parceria COPEL.
+        Espécies de porte médio (como Ipês) são especificamente indicadas para vias sob fiação,
+        reduzindo a necessidade de podas corretivas.
+      </p>
+    </div>
+  </section>
+
+</Base>
+
+<!-- Leaflet map script -->
+<script define:vars={{ geojson }} is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof L === 'undefined') return;
+
+    // Species color mapping
+    const speciesNames = [...new Set(
+      geojson.features
+        .map(f => f.properties.arborizacao?.especie_primaria)
+        .filter(Boolean)
+    )];
+    const colors = [
+      '#4CAF50', '#FF9800', '#2196F3', '#E91E63', '#9C27B0',
+      '#00BCD4', '#FF5722', '#795548', '#607D8B'
+    ];
+    const colorMap = {};
+    speciesNames.forEach((name, i) => {
+      colorMap[name] = colors[i % colors.length];
+    });
+
+    const styleFeature = (feature) => {
+      const arb = feature.properties.arborizacao;
+      const especie = arb?.especie_primaria;
+      return {
+        color: especie ? (colorMap[especie] || '#666') : '#444',
+        weight: 3,
+        opacity: 0.85,
+      };
+    };
+
+    const onEachFeature = (feature, layer) => {
+      const props = feature.properties;
+      const arb = props.arborizacao;
+      if (arb && props.nome) {
+        const popup = `
+          <strong>${props.nome}</strong><br/>
+          <span style="color: ${colorMap[arb.especie_primaria] || '#888'}">●</span> ${arb.especie_primaria}<br/>
+          <em style="font-size: 11px; color: #666;">${arb.nome_cientifico}</em><br/>
+          Porte: ${arb.porte}<br/>
+          Mudas: ${(arb.mudas_necessarias || 0).toLocaleString('pt-BR')} (esc. ${arb.espacamento_m}m)<br/>
+          Extensão: ${(props.comprimento_m || 0).toFixed(0)}m · R$ ${(arb.custo_estimado_mudas || 0).toLocaleString('pt-BR')}
+        `;
+        layer.bindPopup(popup);
+      }
+    };
+
+    // Filter out features without arborization data for the map
+    const arborizedFeatures = geojson.features.filter(f => f.properties.arborizacao && f.properties.nome);
+    const arborizedGeoJSON = { ...geojson, features: arborizedFeatures };
+
+    const map = L.map('arborizacao-map', {
+      renderer: L.canvas({ padding: 0.5 }),
+    }).setView([-25.69, -49.51], 12);
+
+    L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      attribution: '© Stadia Maps, © OpenStreetMap',
+    }).addTo(map);
+
+    // Schools and UBS layer
+    const poiLayer = L.layerGroup([
+      L.marker([-25.6755, -49.5333], {
+        icon: L.divIcon({ className: '', html: '<span style="font-size:18px;filter:drop-shadow(0 1px 2px #0006)">🏫</span>', iconSize: [20, 20], iconAnchor: [10, 10] })
+      }).bindPopup('<strong>Escolas/UBS</strong><br/>Áreas prioritárias para arborização'),
+    ]);
+
+    const streetsGeo = L.geoJSON(arborizedGeoJSON, {
+      style: styleFeature,
+      onEachFeature,
+    });
+
+    const baseLayers = {
+      "Ruas Arborizadas": streetsGeo,
+      "Escolas / UBS": poiLayer,
+    };
+
+    streetsGeo.addTo(map);
+    L.control.layers(null, baseMarkers).addTo(map);
+
+    // Legend
+    const legend = L.control({ position: 'bottomright' });
+    legend.onAdd = () => {
+      const div = L.DomUtil.create('div', 'legend-panel');
+      div.innerHTML = '<p style="font-family: monospace; font-size: 11px; color: #888; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 1px;">Espécies</p>';
+      Object.entries(colorMap).forEach(([name, color]) => {
+        div.innerHTML += `<div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+          <span style="width: 14px; height: 3px; background: ${color}; border-radius: 1px; flex-shrink: 0;"></span>
+          <span style="font-family: sans-serif; font-size: 11px; color: #ccc;">${name}</span>
+        </div>`;
+      });
+      div.style.background = 'rgba(10, 20, 15, 0.92)';
+      div.style.padding = '10px 12px';
+      div.style.borderRadius = '4px';
+      div.style.border = '1px solid rgba(255,255,255,0.08)';
+      div.style.maxWidth = '200px';
+      div.style.pointerEvents = 'auto';
+      return div;
+    };
+    legend.addTo(map);
+  });
+
+  // Load Leaflet JS dynamically
+  (function () {
+    if (typeof L !== 'undefined') return;
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.crossOrigin = 'anonymous';
+    document.head.appendChild(script);
+  })();
+</script>
+
+<style>
+  .legend-panel {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+</style>

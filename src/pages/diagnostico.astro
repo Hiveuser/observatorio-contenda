@@ -185,14 +185,23 @@ import Base from '../layouts/Base.astro';
     <h2 data-animate class="font-display text-xl font-bold text-pergaminho-100 mb-6">Fontes consultadas</h2>
     <div data-animate class="grid grid-cols-2 md:grid-cols-4 gap-3">
       {[
-        'IBGE · Censo 2022', 'IAT-PR · ZEE Paraná', 'INMET · A807 Curitiba',
-        'MapBiomas · 2023', 'EMBRAPA Solos', 'IDR-PR (ex-EMATER)',
-        'CAR/SICAR · 2026', 'Lei 12.651/2012', 'Lei 11.428/2006',
-        'CONAMA 357/2005', 'PL 2159/2021', 'SEAB-PR',
+        { nome: 'IBGE · Censo 2022', url: 'https://cidades.ibge.gov.br/brasil/pr/contenda/panorama' },
+        { nome: 'IAT-PR · ZEE Paraná', url: 'https://www.iat.pr.gov.br/' },
+        { nome: 'INMET · A807 Curitiba', url: 'https://portal.inmet.gov.br/' },
+        { nome: 'MapBiomas · 2023', url: 'https://mapbiomas.org/' },
+        { nome: 'EMBRAPA Solos', url: 'https://www.embrapa.br/solos' },
+        { nome: 'IDR-PR (ex-EMATER)', url: 'https://www.gov.br/idr-pr/' },
+        { nome: 'CAR/SICAR · 2026', url: 'https://www.car.gov.br/' },
+        { nome: 'Lei 12.651/2012', url: 'https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2012/lei/l12651.htm' },
+        { nome: 'Lei 11.428/2006', url: 'https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2006/lei/l11428.htm' },
+        { nome: 'CONAMA 357/2005', url: 'https://www.gov.br/mme/pt-br/assuntos/secretarias/geologia-mineracao-e-transformacao-mineral/conselho-nacional-do-meio-ambiente-conama' },
+        { nome: 'PL 2159/2021', url: 'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=2323596' },
+        { nome: 'SEAB-PR', url: 'https://www.gov.br/seab/pt-br' },
       ].map((fonte) => (
-        <div class="font-mono text-xs text-floresta-600 px-3 py-2 border border-floresta-800/40 rounded-sm">
-          {fonte}
-        </div>
+        <a href={fonte.url} target="_blank" rel="noopener"
+           class="font-mono text-xs text-pergaminho-200/70 hover:text-terracota-400 transition-colors px-3 py-2 border border-floresta-800/40 rounded-sm block">
+          {fonte.nome} ↗
+        </a>
       ))}
     </div>
     <p data-animate class="font-body text-xs text-pergaminho-200/30 mt-4 italic">

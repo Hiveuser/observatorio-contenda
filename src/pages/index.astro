@@ -25,19 +25,25 @@ import Base from '../layouts/Base.astro';
     <!-- Hero content -->
     <div class="relative z-20 h-full flex flex-col justify-end pb-16 px-6 md:px-16 max-w-7xl mx-auto">
 
-      <!-- Eyebrow -->
+      <!-- Eyebrow — click to expand map -->
       <div class="flex items-center gap-3 mb-5 animate-fade-up" style="animation-delay:0.1s">
         <div class="w-2 h-2 rounded-full bg-terracota-500 animate-pulse"></div>
-        <span class="font-data text-xs tracking-widest uppercase text-terracota-400">
+        <span id="mapa-toggle"
+              class="font-data text-xs tracking-widest uppercase text-terracota-400 cursor-pointer hover:text-terracota-300 transition-colors underline decoration-dotted decoration-terracota-400/40 underline-offset-4">
           Observatório Territorial · Contenda/PR · RMC
         </span>
       </div>
 
+      <!-- Expandable map panel (hidden by default) -->
+      <div id="mapa-expandido" class="hidden mt-6 mb-4 animate-fade-in" style="animation-delay:0.15s">
+        <div class="w-full h-64 md:h-80 lg:h-96 rounded-sm overflow-hidden border border-floresta-700/40" id="mapa-panel"></div>
+      </div>
+
       <!-- Main heading -->
-      <h1 class="font-display font-black text-5xl md:text-7xl lg:text-8xl text-pergaminho-100 leading-[0.95] mb-6 animate-fade-up"
+      <h1 class="font-display font-black text-5xl md:text-7xl lg:text-8xl text-white leading-[0.95] mb-6 animate-fade-up"
           style="animation-delay:0.2s">
         Contenda<br/>
-        <span class="italic text-floresta-500 font-normal">por dentro</span>
+        <span class="italic text-white/80 font-normal">por dentro</span>
       </h1>
 
       <!-- Subtitle -->
@@ -394,5 +400,48 @@ import Base from '../layouts/Base.astro';
       fillOpacity: 0.05,
       dashArray: '4 6',
     }).addTo(map);
+
+    // Expandable map on eyebrow click
+    let mapaExpandido = null;
+    const toggleEl = document.getElementById('mapa-toggle');
+    const panelEl = document.getElementById('mapa-expandido');
+    const containerEl = document.getElementById('mapa-panel');
+
+    toggleEl?.addEventListener('click', () => {
+      if (!panelEl) return;
+      panelEl.classList.toggle('hidden');
+
+      if (!panelEl.classList.contains('hidden') && !mapaExpandido && containerEl) {
+        // Delay to let DOM render
+        setTimeout(() => {
+          mapaExpandido = L.map(containerEl, {
+            center: [-25.6787, -49.5369],
+            zoom: 13,
+            zoomControl: true,
+            attributionControl: true,
+          });
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '&copy; OpenStreetMap contributors',
+          }).addTo(mapaExpandido);
+
+          L.marker([-25.6787, -49.5369], { icon }).addTo(mapaExpandido)
+            .bindPopup('<strong>Contenda/PR</strong><br/>25°40\'S 49°32\'W')
+            .openPopup();
+
+          L.rectangle(bounds, {
+            color: '#c45c2a',
+            weight: 1.5,
+            fillOpacity: 0.08,
+            dashArray: '4 6',
+          }).addTo(mapaExpandido);
+
+          setTimeout(() => mapaExpandido?.invalidateSize(), 100);
+        }, 50);
+      } else if (mapaExpandido) {
+        setTimeout(() => mapaExpandido?.invalidateSize(), 100);
+      }
+    });
   </script>
 </Base>
