@@ -1,0 +1,10 @@
+---
+import Base from '../../layouts/Base.astro';
+import FlorAI from '../../components/florai/FlorAI';
+const base = import.meta.env.BASE_URL;
+---
+<Base title="FLOR.AI — Arranjos com Nativas" description="Crie arranjos florais com plantas nativas brasileiras.">
+  <div class="pt-16 min-h-screen bg-floresta-950">
+    <FlorAI client:only="react" />
+  </div>
+</Base>
